@@ -2,6 +2,10 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
+struct Indice{
+	int clave;
+	int direccion;
+};
 class AreaIndices{
 	private:
 		vector<Indice> tablaIndices;
@@ -10,6 +14,6 @@ class AreaIndices{
 		void organizarIndices();
 	public:
  		AreaIndices(int tam){this->tamanio = tam;}
- 		int consultarBloque(int clave);
- 		void actualizarTabla(vector<int> claves);
+ 		int consultar(int claveBuscar);
+ 		void actualizarTabla(vector<Indice> newIndices);
 };
