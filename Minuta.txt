@@ -1,0 +1,22 @@
+- PMAX: Variable que indica hasta donde llega el area primaria de datos. (NO SIGNIFICA LA CANTIDAD DE BLOQUES)
+- OVER: PMAX+1, Indica donde arranca el Overflow. [Inferible]
+- OMAX: Indica donde termina el Overflow y donde es el tamanio máximo el arreglo.
+- n: Numero de registros por bloque
+
+1.1 Empezamos con 0 bloques, y se van insertando en el area primaria de datos  (PMAX) hasta que se llene, si se llena se emite un aviso (bool) para reorganizar los bloques.
+1.2 Empezamos con el overflow desde el principio, y cuando se llena se emite mensaje de reorganizar.
+
+Area de datos devuelve un int tras la inserción, estos int significan distintos estados:
+0: Inserción realizada exitosamente
+1: Inserción realizada en un nuevo bloque
+2: Inserción realizada al final del overflow
+3: Inserción realizada sin espacio para nuevos bloques [n registros restantes para ubicar]
+
+Segun el caso, el gestor actúa y comunica entre si las areas de datos. 
+- Tipo 1: Area de datos se le pide el vector con los indices donde arranca cada bloque, este vector se le pasa al area de Indices mediante Archivo.
+- Tipo 2: Se emite un mensaje 1.1 en forma de un string por return
+- Tipo 3: Se emite mensaje 1.2 en forma de un string por return
+
+
+
+
