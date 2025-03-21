@@ -1,6 +1,11 @@
+#ifndef AREA_INDICES_H
+#define AREA_INDICES_H
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "Indice.h"
+
 using namespace std;
 struct Indice{
 	int clave;
@@ -17,3 +22,5 @@ class AreaIndices{
  		int consultar(int claveBuscar);
  		void actualizarTabla(vector<Indice> newIndices);
 };
+
+#endif // AREA_INDICES_H

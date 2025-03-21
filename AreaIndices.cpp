@@ -1,5 +1,6 @@
+#ifndef AREA_INDICES_CPP
+#define AREA_INDICES_CPP
 #include "AreaIndices.h"
-
 void AreaIndices::organizarIndices(){
 	sort(this->tablaIndices.begin(),this->tablaIndices.end(),[](const Indice& a,const Indice& b){
 		return a.clave < b.clave;
@@ -31,6 +32,10 @@ void AreaIndices::actualizarTabla(vector<Indice> newIndices){
 	this->tablaIndices = move(newIndices);
 	this->organizarIndices();
 }
+
+#endif // AREA_INDICES_CPP
+
+
 
 
 
