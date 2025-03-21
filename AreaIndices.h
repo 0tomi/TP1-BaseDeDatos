@@ -7,10 +7,7 @@
 #include "Indice.h"
 
 using namespace std;
-struct Indice{
-	int clave;
-	int direccion;
-};
+
 class AreaIndices{
 	private:
 		vector<Indice> tablaIndices;
