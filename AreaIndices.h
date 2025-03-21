@@ -15,7 +15,7 @@ class AreaIndices{
 
 		void organizarIndices();
 	public:
- 		AreaIndices(int tam){this->tamanio = tam;}
+ 		AreaIndices(int tam);
  		int consultar(int claveBuscar);
  		void actualizarTabla(vector<Indice> newIndices);
 };

@@ -1,3 +1,5 @@
+#ifndef REGISTRO
+#define REGISTRO
 #include <string>
 
 struct Registro{
@@ -5,3 +7,4 @@ struct Registro{
     std::string datos;
     int dir;
 };
+#endif // REGISTRO

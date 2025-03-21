@@ -1,20 +1,25 @@
+#ifndef AREA_DATOS_H
+#define AREA_DATOS_H
+
+#include <vector>
 #include "Registro.h"
-#include <string>
+#include "Indice.h"
 using namespace std;
+
 class AreaDatos{
     public:
         AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
         int insertarRegistro(int clave, string dato);
-        string obtenerRegistro(int clave);
-        ~AreaDatos();
-        void obtenerTablaIndices();
+        string* obtenerRegistro(int clave); // string luego se reemplaza por Template
+        vector<Indice> obtenerTablaIndices();
     private:
-        Registro* registros;
-        int CANT_BLOQ = 0, ELM_POR_BLOQ, OMAX, PMAX; 
+        vector<Registro> registros;
+        int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
         void ordenarBloque(int posInit);
         void crearBloque();
 };
 
+#endif // !AREA_DATOS_H
 
 /**
 template <typename T>

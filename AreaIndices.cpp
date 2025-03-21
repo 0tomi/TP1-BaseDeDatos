@@ -7,6 +7,12 @@ void AreaIndices::organizarIndices(){
 	});
 }
 
+AreaIndices::AreaIndices(int tam)
+{
+    // Reservamos la cantidad de memoria que tendra el area de indices
+    this->tablaIndices.reserve(tam);
+}
+
 int AreaIndices::consultar(int claveBuscar){
 	int primerIndice = 0;
 	int ultimoIndice = this->tablaIndices.size() - 1;
