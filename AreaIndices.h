@@ -14,6 +14,7 @@ class AreaIndices{
 		int tamanio;
 
 		void organizarIndices();
+		friend ostream& operator<< (ostream& os, AreaIndices& areaIndices);
 	public:
  		AreaIndices(int tam);
  		int consultar(int claveBuscar);

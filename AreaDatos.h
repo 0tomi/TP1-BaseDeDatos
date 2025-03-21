@@ -12,6 +12,7 @@ class AreaDatos{
         int insertarRegistro(int clave, string dato);
         string* obtenerRegistro(int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
+        friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
     private:
         vector<Registro> registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
