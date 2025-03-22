@@ -11,7 +11,7 @@ AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
     this->registros.reserve(OMAX);
 }
 
-int AreaDatos::insertarRegistro(int pos, int clave, string dato)
+AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
 {
     /*  Casos posibles:
         0: No hay bloques.
@@ -63,7 +63,7 @@ int AreaDatos::insertarRegistro(int pos, int clave, string dato)
    if (!CANTIDAD_BLOQUES) {
         this->crearBloque(0);
         this->registros[0] = {clave, dato, 0}; // Por default 0 indica que no apunta al overflow.
-        return 1;
+        return AreaDatos::NuevoBloqueCreado;
     }
 
     if (!this->isLastBlock(pos)){
