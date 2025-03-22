@@ -6,8 +6,17 @@
 #include "Indice.h"
 using namespace std;
 
+
+
 class AreaDatos{
     public:
+        enum Estado {
+            InsercionIntermedia,
+            NuevoBloqueCreado,
+            OverflowLleno,
+            AreaPrimariaLlena
+        };
+
         AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
         int insertarRegistro(int pos, int clave, string dato);
         string* obtenerRegistro(int clave); // string luego se reemplaza por Template
@@ -19,8 +28,8 @@ class AreaDatos{
         int ultimoBloqueInsertado;
         void ordenarBloque(int posInit);
         void crearBloque(int pos);
-        bool checkBloqueLleno(int pos);
-        bool IsLastBlock(int pos);
+        bool isBlockFull(int pos);
+        bool isLastBlock(int pos);
 };
 
 #endif // !AREA_DATOS_H

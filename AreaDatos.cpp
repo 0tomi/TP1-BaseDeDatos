@@ -14,12 +14,44 @@ AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
 int AreaDatos::insertarRegistro(int pos, int clave, string dato)
 {
     /*  Casos posibles:
-        1: No bloques, creamos un bloque e insertamos el elemento.
-        2: Insercion en un bloque creado.
-        2.b: Inserccion en un bloque creado lleno.
-        3: Insercion en el ultimo bloque estando n/2 lleno
-        4: Insercion al final del overflow (sin espacio)
-        5: Insercion genera el ultimo bloque disponible a crear en el area primaria.
+        0: No hay bloques.
+            0.1: Se procede a crear un nuevo bloque e insertar el elemento.
+                Retorna: AreaDatos::NuevoBloqueCreado
+
+        2: Insercion en bloque con espacio.
+            2.a: Insercion en algun bloque anterior al ultimo. 
+                2.a.1: Se inserta el elemento. 
+                    Retorna: AreaDatos::InsercionIntermedia
+            2.b: Insercion en el ultimo bloque.
+                2.b.a: Contiene una cantidad de registros menor a n/2. 
+                    2.b.a.1: Se inserta el elemento.
+                        Retorna: AreaDatos::InsercionIntermedia
+                2.b.b: Contiene cantidad de registros mayor o igual a n/2.
+                    2.b.b.1: Se crea nuevo bloque. 
+                        2.b.b.a: El bloque creado es el ultimo que se puede poner en el area primaria.
+                            2.b.b.a.1: Se inserta la clave. 
+                            2.b.b.a.2: Se retorna AreaDatos::AreaPrimariaLlena
+                        2.b.b.b: Hay espacio para mas bloques despues del insertado.
+                            2.b.b.b.1: Se inserta el elemento.
+                                Retorna: AreaDatos::NuevoBloqueCreado.
+
+        3: Insercion en bloque lleno. 
+            3.a: Hay espacio en el overflow.
+                3.a.1: Se busca la clave menor mas cercana a la clave que vamos a insertar.
+                3.a.2: Se va a la direccion que contiene la clave menor. 
+                3.a.2.a: No apunta a ningun lado:
+                    3.a.2.a.1: Se coloca el dato y la clave donde haya espacio en el overflow.
+                    3.a.2.a.2: Se coloca la direccion del dato en la direccion del overflow de la clave menor. 
+                        Retorna: AreaDatos::InsercionIntermedia
+                3.a.2.b: La clave menor contiene una direccion. 
+                    3.a.2.b.1: Nos movemos mediante las direcciones que contengan las claves posteriores al overflow. 
+                    3.a.2.b.2: Se ubica una clave que no apunte a ningun lado.
+                    3.a.2.b.3: Se ubica el registro en el overflow. 
+                    3.a.2.b.4: Se coloca la direccion de ese registro en la clave previamente encontrada (dentro del overflow).
+                        Retorna: AreaDatos::InsercionIntermedia.
+            3.b: Queda UN espacio en el overflow.
+                3.b.1: Se inserta la clave. 
+                3.b.2: Se retorna Area::OverflowLleno
 
         Codigos: 
         1: Insercion usando nuevo bloque
