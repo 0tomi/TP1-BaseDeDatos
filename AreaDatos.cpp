@@ -3,6 +3,25 @@
 
 #include "AreaDatos.h"
 
+ostream& operator<< (ostream& os, AreaDatos& areaDatos){
+    int nroBloque = 0, x;
+    os << "+------------------------------------------+" << endl;
+    os << "| BLOQUE " << nroBloque << setw(34) << "|" << endl;
+    os << "|------------------------------------------|" << endl;
+    for(x = 0; x < areaDatos.OMAX; x++ ){
+
+        if(x % areaDatos.ELM_POR_BLOQ == 0 && x != 0) {
+            nroBloque++;
+            os << "| BLOQUE " << nroBloque << endl;
+            os << "|------------------------------------------|" << endl;
+        }
+        os << "| " << setw(5) << AreaDatos.registros[x].clave << " | " << setw(5) << AreaDatos.registros[x].dato << " |" << setw(5) << AreaDatos.registros[x].dir << endl;
+        os << "|------------------------------------------|" << endl;
+    }
+    os << "+------------------------------------------+" << endl;
+    return os;
+}
+
 AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
     this->ELM_POR_BLOQ = ELM_POR_BLOQ;
     this->OMAX = OMAX;
