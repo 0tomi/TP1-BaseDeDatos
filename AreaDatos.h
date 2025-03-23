@@ -2,6 +2,7 @@
 #define AREA_DATOS_H
 
 #include <vector>
+#include <algorithm>
 #include "Registro.h"
 #include "Indice.h"
 using namespace std;
@@ -33,7 +34,9 @@ class AreaDatos{
         bool isBlockFull(int pos);
         bool isLastBlock(int pos);
         bool isOverflowFull();
-        int buscarRegistroSinDireccion(int bloque, int clave);
+        int buscarDirRegistroSinDireccion(int bloque, int clave);
+        int buscarDirClaveCercana(int bloque, int clave);
+        int buscarDirRegistroVacio(int bloque);
         int insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato);
 };
 
