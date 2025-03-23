@@ -31,6 +31,10 @@ class AreaDatos{
         void crearBloque(int pos);
         bool isBlockFull(int pos);
         bool isLastBlock(int pos);
+        bool isOverFull();
+        int overPosLibre();
+        int buscarRegistroCercano(int bloque, int clave);
+        int insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato);
 };
 
 #endif // !AREA_DATOS_H

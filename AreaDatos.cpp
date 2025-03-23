@@ -69,7 +69,38 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
     if (!this->isLastBlock(pos)){
         if (!this->isBlockFull(pos)) {
 
-        } // caso bloque lleno
+        }else{
+            // caso bloque lleno
+            //3.a: Hay espacio en el overflow.
+                if (!isOverFull()){
+                    int ultimoRegistro = this->OMAX-1;
+                    /*
+                     3.b: Queda UN espacio en el overflow.
+                     3.b.1: Se inserta la clave. 
+                     3.b.2: Se retorna Area::OverflowLleno
+                    */
+                    if(this->registros[ultimoRegistro].clave != 0;){
+                        insertarNuevoRegistroEnOverflow(pos, clave, dato);
+                        return AreaDatos::OverflowLleno;
+                    }else{
+                        insertarNuevoRegistroEnOverflow(pos, clave, dato);
+                        return AreaDatos::InsercionIntermedia //Retorna: AreaDatos::InsercionIntermedia
+                    }
+                }
+                
+                
+
+            
+            
+
+                               
+            }
+          
+        
+
+
+        } 
+
 
 
     } 
@@ -99,4 +130,65 @@ bool AreaDatos::isLastBlock(int pos)
     return pos == this->ultimoBloqueInsertado;
 }
 
+bool AreaDatos::isOverFull(){
+    for(int x = this->PMAX; x < this->OMAX; x++){
+        if (this->registros[x].clave == 0) return false;
+    return true;
+}
+
+int AreaDatos::overPosLibre(){
+    int noPosLibre = -1;
+    for(int x = this->PMAX; x < this->OMAX; x++){
+        
+        if (this->registros[x].clave == 0) {
+            return x;    
+        }
+
+   }
+    return noPosLibre;
+}
+
+int AreaDatos::buscarRegistroCercano(int bloque, int clave){
+    int claveCercana = -1;
+    for(int x = bloque; x < bloque+this->ELM_POR_BLOQ; x++){
+        if (this->registros[x].clave < clave && this->registros[x].clave > claveCercana){
+            claveCercana = this->registros[x].clave;
+            posicionCercana = x;
+        }
+    }
+    return posicionCercana;
+}
+
+
+void AreaDatos::insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato){
+    int posRegistroCercano = buscarRegistroCercano(posBloque, clave); //3.a.1: Se busca la clave menor mas cercana a la clave que vamos a insertar.
+    int direccion = this->registros[posRegistroCercano].dir; //3.a.2: Se va a la direccion que contiene la clave menor. 
+    if (direccion == 0){ //3.a.2.a: No apunta a ningun lado:
+        /*
+                    3.a.2.a.1: Se coloca el dato y la clave donde haya espacio en el overflow.
+                    3.a.2.a.2: Se coloca la direccion del dato en la direccion del overflow de la clave menor. 
+                     */
+        int overPosLibre = overPosLibre();
+        this->registros[posRegistroCercano].dir = overPosLibre;
+        this->registros[overPosLibre] = {clave, dato, 0};
+
+    }else{
+                    /*3.a.2.b: La clave menor contiene una direccion. 
+                    3.a.2.b.1: Nos movemos mediante las direcciones que contengan las claves posteriores al overflow. 
+                    3.a.2.b.2: Se ubica una clave que no apunte a ningun lado.
+                    3.a.2.b.3: Se ubica el registro en el overflow. 
+                    3.a.2.b.4: Se coloca la direccion de ese registro en la clave previamente encontrada (dentro del overflow).*/
+        int direccionActual = this->registros[posRegistroCercano].dir;
+
+        while (this->registros[direccionActual].dir != 0){
+            direccionActual = this->registros[direccionActual].dir;
+            int overPosLibre = overPosLibre();
+            this->registros[posRegistroCercano].dir = overPosLibre;
+            this->registros[overPosLibre] = {clave, dato, 0};
+                    
+        }
+                        
+    }
+        
+}
 #endif // AREA_DATOS_CPP
