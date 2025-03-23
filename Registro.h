@@ -3,7 +3,7 @@
 #include <string>
 
 struct Registro{
-    int clave;
+    int clave = 0;
     std::string datos;
     int dir;
 };

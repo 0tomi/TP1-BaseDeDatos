@@ -2,14 +2,24 @@
 #define AREA_DATOS_H
 
 #include <vector>
+#include <algorithm>
 #include "Registro.h"
 #include "Indice.h"
 using namespace std;
 
+
+
 class AreaDatos{
     public:
+        enum Estado {
+            InsercionIntermedia,
+            NuevoBloqueCreado,
+            OverflowLleno,
+            AreaPrimariaLlena
+        };
+
         AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
-        int insertar(int clave, string dato);
+        Estado insertar(int pos, int clave, string dato);
         string* consultar(int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
         friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
@@ -17,8 +27,17 @@ class AreaDatos{
     private:
         vector<Registro> registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
+        int ultimoBloqueInsertado;
+        int ultimoRegistroInsertadoOverflow = PMAX+1;
         void ordenarBloque(int posInit);
-        void crearBloque();
+        void crearBloque(int pos);
+        bool isBlockFull(int pos);
+        bool isLastBlock(int pos);
+        bool isOverflowFull();
+        int buscarDirRegistroSinDireccion(int bloque, int clave);
+        int buscarDirClaveCercana(int bloque, int clave);
+        int buscarDirRegistroVacio(int bloque);
+        int insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato);
 };
 
 #endif // !AREA_DATOS_H
