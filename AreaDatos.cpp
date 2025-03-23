@@ -71,32 +71,29 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
 
     // Caso bloque intermedio
     if (!this->isLastBlock(pos)){
-        // Caso 2.a
+        // Caso 1
         if (!this->isBlockFull(pos)) {
 
 
             return AreaDatos::InsercionIntermedia;
         }
 
-        // Caso 3.c: Overflow lleno
+        // Caso 2
         if (isOverflowFull())
             return AreaDatos::OverflowLleno;
 
-        // Caso 3.a y 3.b
-        // 3.a: Hay espacio en el overflow.
         auto registroSinOverflow = this->buscarDirRegistroSinDireccion(pos, clave);
         this->ultimoRegistroInsertadoOverflow++;
         this->registros[this->ultimoRegistroInsertadoOverflow] = {clave, dato, 0};
         this->registros[registroSinOverflow].dir = this->ultimoRegistroInsertadoOverflow;
-
-        // 3.b: Queda un espacio en el overflow
+        
         if (isOverflowFull())
             return AreaDatos::OverflowLleno;
         else return AreaDatos::InsercionIntermedia;              
     }
 
     // Caso ultimo bloque
-    // Caso 2.b
+    // Caso 3
 
 
 
