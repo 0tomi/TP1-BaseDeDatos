@@ -27,13 +27,13 @@ class AreaDatos{
         vector<Registro> registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
         int ultimoBloqueInsertado;
+        int ultimoRegistroInsertadoOverflow = PMAX+1;
         void ordenarBloque(int posInit);
         void crearBloque(int pos);
         bool isBlockFull(int pos);
         bool isLastBlock(int pos);
-        bool isOverFull();
-        int overPosLibre();
-        int buscarRegistroCercano(int bloque, int clave);
+        bool isOverflowFull();
+        int buscarRegistroSinDireccion(int bloque, int clave);
         int insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato);
 };
 
