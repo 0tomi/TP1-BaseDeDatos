@@ -144,6 +144,26 @@ int AreaDatos::buscarDirClaveCercana(int pos, int clave)
     return dirClaveAnterior;    
 }
 
+  string* AreaDatos::consultar(int pos, int clave){
+    int dirClaveAnterior = this->buscarDirClaveCercana(int pos, int clave);
+    if(dirClaveAnterior+1 == pos+this->ELM_POR_BLOQ || registros[dirClaveAnterior+1].clave != clave){
+       int dirOver=registros[dirClaveAnterior].dir;
+        while (dirOver != 0)
+        {
+            if(registros[dirOver].clave == clave){
+                  return &(registros[dirOver].datos);
+            }
+
+            dirOver = registros[dirOver].dir;
+        }
+    
+        return nullptr;
+
+    }
+    return &(registros[dirClaveAnterior+1].datos);
+
+  }
+
 int AreaDatos::buscarDirRegistroVacio(int bloque)
 {
     for (int x = bloque; x < bloque+this->ELM_POR_BLOQ; x++)
