@@ -3,6 +3,7 @@
 
 #include "AreaDatos.h"
 #include <iomanip>
+#include "Indice.h"
 
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
     int nroBloque = 0, x;
@@ -72,6 +73,8 @@ AreaDatos::Estado AreaDatos::insercionUltimoBloque(int clave, string& dato, int 
     return AreaDatos::NuevoBloqueCreado;
 }
 
+
+
 AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, int pos)
 {
     if (!this->isBlockFull(pos)) {
@@ -94,6 +97,13 @@ AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, 
     if (isOverflowFull())
         return AreaDatos::OverflowLleno;
     return AreaDatos::InsercionIntermedia;
+}
+
+vector<Indice> AreaDatos::obtenerTablaIndices(){
+    vector<Indice>indices;
+    for(int i = 0; i <= this->CANTIDAD_BLOQUES*ELM_POR_BLOQ; i+ELM_POR_BLOQ) 
+        indices.push_back({registros[i].clave,i});
+    return indices;
 }
 
 void AreaDatos::ordenarBloque(int posInit)
