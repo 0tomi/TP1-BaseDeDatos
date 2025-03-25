@@ -73,8 +73,6 @@ AreaDatos::Estado AreaDatos::insercionUltimoBloque(int clave, string& dato, int 
     return AreaDatos::NuevoBloqueCreado;
 }
 
-
-
 AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, int pos)
 {
     if (!this->isBlockFull(pos)) {
