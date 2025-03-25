@@ -7,7 +7,7 @@ Comportamiento el area de primaria:
 
 Comportamiento del overflow:
 - Se recorre todo el bloque donde iria el dato hasta encontrar una ubicacion disponible. 
-- Si no hay ubicacion, sse manda al overflow asi nomas. 
+- Si no hay ubicacion, se manda al overflow asi nomas. 
 
 Cosas por hacer:
 [FALTA] Cambiar insercionBloqueIntermedio para insertar datos en el overflow asi nomas, y detectar si el registro es el ultimo para engancharle ahi la direccion del overflow
