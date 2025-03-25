@@ -101,7 +101,8 @@ AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, 
 
 vector<Indice> AreaDatos::obtenerTablaIndices(){
     vector<Indice>indices;
-    for(int i = 0; i <= this->CANTIDAD_BLOQUES*ELM_POR_BLOQ; i+ELM_POR_BLOQ) 
+    auto bloques = this->CANTIDAD_BLOQUES;
+    for(int i = 0; i <= this->CANTIDAD_BLOQUES*ELM_POR_BLOQ; i += ELM_POR_BLOQ) 
         indices.push_back({registros[i].clave,i});
     return indices;
 }
