@@ -44,7 +44,7 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
                 2.c.1: Se retorna el estado de Overflow lleno.
         
         [3: Insercion en el ultimo bloque.]   [FALTA]
-            3.a: Contiene una cantidad de registros menor a n/2.  [FALTA]
+            3.a: Contiene una cantidad de registros menor a n/2.  [HECHO]
                 3.a.1: Se inserta el elemento.
                     Retorna: AreaDatos::InsercionIntermedia
             3.b: Contiene cantidad de registros mayor o igual a n/2.  [FALTA]
@@ -70,8 +70,36 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
 
     // Caso3: ultimo bloque
     if (this->isLastBlock(pos)) {
-
+        int limiteMitad = ELM_POR_BLOQ/2;
+        int contadorElementos = 0, recorridos = 0;
+        while(registros[pos].clave != 0 && recorridos < ELM_POR_BLOQ){
+            contadorElementos++;
+            recorridos++;
+            pos++;
+        }
+        if(contadorElementos < limiteMitad){ 
+            
+            auto posNuevoRegistro = this->buscarDirRegistroVacio(pos);
+            if (posNuevoRegistro >= 0) {
+                this->registros[posNuevoRegistro] = {clave, dato, 0};
+                return AreaDatos::InsercionIntermedia;
+            }
+        } else {
+            this->crearBloque(ultimoBloqueInsertado + ELM_POR_BLOQ);
+            if(this->ultimoBloqueInsertado+ELM_POR_BLOQ == PMAX){
+                this->registros[ultimoBloqueInsertado] = {clave,dato,0};
+                return AreaDatos::AreaPrimariaLlena;
+            }
+            else{
+                auto nuevaPos = buscarDirRegistroVacio(ultimoBloqueInsertado);
+                if (nuevaPos >= 0) {
+                    this->registros[nuevaPos] = {clave, dato, 0};
+                    return AreaDatos::NuevoBloqueCreado;
+                }
+            }
+        }
     }
+    
 
     // Caso bloque intermedio
     // Caso 1
