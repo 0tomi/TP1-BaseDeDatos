@@ -1,15 +1,16 @@
 #ifndef AREA_INDICES_CPP
 #define AREA_INDICES_CPP
 #include "AreaIndices.h"
+#include <iomanip>
 
 ostream& operator <<(ostream& os, AreaIndices& areaIndices){
-    os << "+-----------------------------+" << endl;
+    os << "+---------------[Tabla de Indices]--------------+" << endl;
     for(auto& indices: areaIndices.tablaIndices){
         os << "|-----------------------------|" << endl;
         os << "| " << setw(10) << indices.clave << " | " << setw(10) << indices.direccion << " |" << endl;
         os << "|-----------------------------|" << endl;
     }
-    os << "+-----------------------------+";
+    os << "+----------------------------------------------+";
     return os;
 }
 

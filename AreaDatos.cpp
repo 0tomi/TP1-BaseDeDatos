@@ -2,6 +2,7 @@
 #define AREA_DATOS_CPP
 
 #include "AreaDatos.h"
+#include <iomanip>
 
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
     int nroBloque = 0, x;
@@ -15,7 +16,7 @@ ostream& operator<< (ostream& os, AreaDatos& areaDatos){
             os << "| BLOQUE " << nroBloque << endl;
             os << "|------------------------------------------|" << endl;
         }
-        os << "| " << setw(5) << AreaDatos.registros[x].clave << " | " << setw(5) << AreaDatos.registros[x].dato << " |" << setw(5) << AreaDatos.registros[x].dir << endl;
+        os << "| " << setw(5) << areaDatos.registros[x].clave << " | " << setw(5) << areaDatos.registros[x].datos << " |" << setw(5) << areaDatos.registros[x].dir << endl;
         os << "|------------------------------------------|" << endl;
     }
     os << "+------------------------------------------+" << endl;
