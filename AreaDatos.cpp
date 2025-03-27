@@ -104,7 +104,13 @@ AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, str
 */
 AreaDatos::Estado AreaDatos::insercionBloqueLleno(int block, int clave, string &dato)
 {
-    
+    if(getOccupationRate(PMAX+1) < 100){
+        auto posRegistroVacio = this->buscarDirRegistroVacio(PMAX+1);
+        this->registros[posRegistroVacio] = {clave, dato, 0};
+        return AreaDatos::InsercionIntermedia;
+    }else{
+        return AreaDatos::OverflowLleno;
+    }
 }
 
 /// ######## NO ELIMINO PORQUE SE PUEDE REUTILIZAR, PERO YA NO VA ########
