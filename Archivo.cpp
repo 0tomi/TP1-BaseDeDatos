@@ -10,7 +10,7 @@ Archivo::Archivo(int n, int PMAX, int OMAX): tablaDatos(n, PMAX, OMAX), tablaInd
 std::string* Archivo::consulta(int clave)
 {
     auto direccion = this->tablaIndices.consultar(clave);
-    return this->tablaDatos.consultar(direccion);
+    return this->tablaDatos.consultar(direccion, clave);
 }
 
 std::string Archivo::insertar(int clave, std::string dato)
@@ -18,8 +18,7 @@ std::string Archivo::insertar(int clave, std::string dato)
     auto direccion = this->tablaIndices.consultar(clave);
     auto codigo = this->tablaDatos.insertar(direccion, clave, dato);
     switch (codigo){
-        case AreaDatos::NuevoBloqueCreado: 
-            this->tablaIndices.actualizarTabla( this->tablaDatos.obtenerTablaIndices() );
+        case AreaDatos::InsercionIntermedia: 
             this->lastWarning = "";
             break;
  
@@ -30,8 +29,10 @@ std::string Archivo::insertar(int clave, std::string dato)
         case AreaDatos::AreaPrimariaLlena:
             this->lastWarning = "Ultimo bloque del area primaria colocado, sin espacio para mas bloques.";
             break;
-        // 0: Insercion directa.
-        default: this->lastWarning = "";
+        // Se creo un nuevo bloque / Se cambio de lugar el primer registro de un bloque.
+        default:
+            this->tablaIndices.actualizarTabla( this->tablaDatos.obtenerTablaIndices() );
+            this->lastWarning = "";
     }
 
     return this->lastWarning;
