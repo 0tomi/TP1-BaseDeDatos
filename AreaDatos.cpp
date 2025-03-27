@@ -37,10 +37,14 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
     if (!CANTIDAD_BLOQUES) 
         return this->insercionSinBloques(clave, dato);
     
-    if (this->isLastBlock(pos)) 
-        return this->insercionUltimoBloque(clave, dato, pos);
+    auto porcentajeOcupacion = this->getOccupationRate(pos);
+
+    if (porcentajeOcupacion < 50);
+        return this->insercionComun(pos, clave, dato);
+    if (porcentajeOcupacion == 100)
+        return this->insercionBloqueLleno(pos, clave, dato);
     
-    return this->insercionBloqueIntermedio(clave, dato, pos);
+    return this->insercionBloqueMedioLleno(pos, clave, dato);
 }
 
 AreaDatos::Estado AreaDatos::insercionSinBloques(int clave, string& dato)
@@ -50,6 +54,60 @@ AreaDatos::Estado AreaDatos::insercionSinBloques(int clave, string& dato)
     return AreaDatos::NuevoBloqueCreado;
 }
 
+// Posibles salidas: InsercionIntermedia, PrimerRegistroCambiado.
+AreaDatos::Estado AreaDatos::insercionComun(int block, int clave, string&dato)
+{
+    registros[this->buscarDirUltimoRegistro(block)].dir = 0;    // Limpio antes de ingresar el registro, en caso de que cambie el ultimo.
+
+    auto posNuevoRegistro = this->buscarDirRegistroVacio(block);
+    this->registros[posNuevoRegistro] = {clave, dato, 0};
+
+    bool primerRegistroCambiado = this->ordenarBloque(block);
+    registros[this->buscarDirUltimoRegistro(block)].dir = this->PMAX+1;     // Asignamos al ultimo registro el puntero al overflow
+
+    if (primerRegistroCambiado)
+        return this->PrimerRegistroCambiado;
+    return this->InsercionIntermedia;
+}
+
+/*
+    Posibles salidas: InsercionIntermedia, NuevoBloqueCreado, AreaPrimariaLlena
+    Caso bloque medio lleno: 
+    1- Nos fijamos cual es la clave maxima y minima que contiene el bloque.
+    Casos posibles: 
+        A - La clave a insertar se encuentra entre el rango de la maxima y la minima: 
+            A.1 - Se inserta la clave de forma normal en el bloque.
+            A.2 - Se reordena el bloque.
+            A.3 - Se retorna insercion intermedia. (Es imposible que la primer o la ultima clave cambien.)
+        B- La clave a insertar se encuentra por fuera del rango, ya se porque es menor que el minimo o mayor que el maximo.
+            B.A - Hay espacio para nuevos bloques.
+                B.A.1 - Se crea un nuevo bloque.
+                B.A.2 - Se inserta la clave en el nuevo bloque.
+                B.A.3 - Se retorna NuevoBloqueCreado. 
+            B.B - No hay espacio para nuevos bloques. 
+                B.A.1 - Se retorna AreaPrimariaLlena.
+*/
+AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, string &dato)
+{
+    
+}
+
+/*
+    Posibles salidas: InsercionIntermedia, OverflowLleno
+    Caso bloque lleno: 
+    A: Hay espacio en el Overflow
+        A.1- Se inserta la clave en el overflow.
+        A.2- Se retorna InsercionIntermedia.
+    B: No hay espacio en el Overflow
+        B.1- Se retorna OverflowLleno.
+
+*/
+AreaDatos::Estado AreaDatos::insercionBloqueLleno(int block, int clave, string &dato)
+{
+    
+}
+
+/// ######## NO ELIMINO PORQUE SE PUEDE REUTILIZAR, PERO YA NO VA ########
 AreaDatos::Estado AreaDatos::insercionUltimoBloque(int clave, string& dato, int pos)
 {
     auto cantidadRegistros = this->getCantidadRegistros(pos);
@@ -73,6 +131,7 @@ AreaDatos::Estado AreaDatos::insercionUltimoBloque(int clave, string& dato, int 
     return AreaDatos::NuevoBloqueCreado;
 }
 
+/// ######## NO ELIMINO PORQUE SE PUEDE REUTILIZAR, PERO YA NO VA ########
 AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, int pos)
 {
     if (!this->isBlockFull(pos)) {
@@ -96,6 +155,23 @@ AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, 
         return AreaDatos::OverflowLleno;
     return AreaDatos::InsercionIntermedia;
 }
+/// ######## FIN DE FUNCIONES A ELIMINAR ########
+
+string* AreaDatos::consultar(int pos, int clave){
+    int posRegistroBuscado = this->buscarDirClave(pos, clave);
+    if (posRegistroBuscado == -1) {
+        auto posOverflow = this->registros[this->buscarDirUltimoRegistro(pos)].dir;
+        for (int x = posOverflow; (x < this->OMAX) && (registros[x].clave != clave); x++)
+            posRegistroBuscado = x;
+
+        if (posRegistroBuscado == this->OMAX)
+            posRegistroBuscado = -1;
+    }
+
+    if (posRegistroBuscado == -1)
+        return nullptr;
+    return &(registros[posRegistroBuscado].datos);
+}
 
 vector<Indice> AreaDatos::obtenerTablaIndices(){
     vector<Indice>indices;
@@ -105,11 +181,13 @@ vector<Indice> AreaDatos::obtenerTablaIndices(){
     return indices;
 }
 
-void AreaDatos::ordenarBloque(int posInit)
+bool AreaDatos::ordenarBloque(int posInit)
 {
+    int clavePrimerRegistroAntesDeOrdenar = registros[posInit].clave;
     auto inicioBloque = registros.begin() + posInit;
     auto finalBloque = registros.begin() + (posInit + this->ELM_POR_BLOQ);
     sort(inicioBloque, finalBloque, [](Registro &a, Registro &b) { return a.clave < b.clave; });
+    return (clavePrimerRegistroAntesDeOrdenar != registros[posInit].clave);
 }
 
 int AreaDatos::crearBloque(int pos)
@@ -119,11 +197,15 @@ int AreaDatos::crearBloque(int pos)
     return ultimoBloqueInsertado;
 }
 
-bool AreaDatos::isBlockFull(int pos)
+int AreaDatos::getOccupationRate(int block)
 {
-    for (int x = pos; x < pos+this->ELM_POR_BLOQ; x++)
-        if (this->registros[x].clave == 0) return false;
-    return true;
+    int occupation = 0;
+    for (int x = block; x < block+this->ELM_POR_BLOQ; x++)
+        if (this->registros[x].clave != 0) occupation++;
+
+    float ocu = occupation, n = this->ELM_POR_BLOQ; 
+    float porcentage = (ocu / n) * 100;    
+    return porcentage;
 }
 
 bool AreaDatos::isLastBlock(int pos)
@@ -153,25 +235,13 @@ int AreaDatos::buscarDirClaveCercana(int pos, int clave)
     return dirClaveAnterior;    
 }
 
-  string* AreaDatos::consultar(int pos, int clave){
-    int dirClaveAnterior = this->buscarDirClaveCercana(int pos, int clave);
-    if(dirClaveAnterior+1 == pos+this->ELM_POR_BLOQ || registros[dirClaveAnterior+1].clave != clave){
-       int dirOver=registros[dirClaveAnterior].dir;
-        while (dirOver != 0)
-        {
-            if(registros[dirOver].clave == clave){
-                  return &(registros[dirOver].datos);
-            }
-
-            dirOver = registros[dirOver].dir;
-        }
-    
-        return nullptr;
-
-    }
-    return &(registros[dirClaveAnterior+1].datos);
-
-  }
+int AreaDatos::buscarDirUltimoRegistro(int bloque)
+{
+    int ultimoRegistro = bloque;
+    for (int x = bloque; (x < this->ELM_POR_BLOQ+bloque) && (registros[x].clave != 0); x++)
+        ultimoRegistro = x;
+    return ultimoRegistro;
+}
 
 int AreaDatos::buscarDirRegistroVacio(int bloque)
 {
@@ -189,37 +259,11 @@ int AreaDatos::getCantidadRegistros(int bloque)
     return cantidad_Registros;
 }
 
-/// Esta funcion ya no se utiliza pero la dejo aca como recuerdo
-//  PD: Capaz luego la modificamos y asi modularizamos un poco mas la insercion 
-int AreaDatos::insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato){
-    int posRegistroCercano = buscarDirClaveCercana(posBloque, clave); //3.a.1: Se busca la clave menor mas cercana a la clave que vamos a insertar.
-    int direccion = this->registros[posRegistroCercano].dir; //3.a.2: Se va a la direccion que contiene la clave menor. 
-    if (direccion == 0){ //3.a.2.a: No apunta a ningun lado:
-        /*
-                    3.a.2.a.1: Se coloca el dato y la clave donde haya espacio en el overflow.
-                    3.a.2.a.2: Se coloca la direccion del dato en la direccion del overflow de la clave menor. 
-                     */
-        int overPosLibre = this->ultimoRegistroInsertadoOverflow + 1;
-        this->registros[posRegistroCercano].dir = overPosLibre;
-        this->registros[overPosLibre] = {clave, dato, 0};
-
-    }else{
-                    /*3.a.2.b: La clave menor contiene una direccion. 
-                    3.a.2.b.1: Nos movemos mediante las direcciones que contengan las claves posteriores al overflow. 
-                    3.a.2.b.2: Se ubica una clave que no apunte a ningun lado.
-                    3.a.2.b.3: Se ubica el registro en el overflow. 
-                    3.a.2.b.4: Se coloca la direccion de ese registro en la clave previamente encontrada (dentro del overflow).*/
-        int direccionActual = this->registros[posRegistroCercano].dir;
-
-        while (this->registros[direccionActual].dir != 0){
-            direccionActual = this->registros[direccionActual].dir;
-            int overPosLibre = this->ultimoRegistroInsertadoOverflow + 1;
-            this->registros[posRegistroCercano].dir = overPosLibre;
-            this->registros[overPosLibre] = {clave, dato, 0};
-                    
-        }
-                        
-    }
-        
+int AreaDatos::buscarDirClave(int bloque, int clave)
+{
+    for (int x = bloque; x < bloque + this->ELM_POR_BLOQ; x++)
+        if (registros[x].clave == clave) return x;
+    return -1;    
 }
+
 #endif // AREA_DATOS_CPP
