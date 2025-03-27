@@ -48,6 +48,7 @@ class AreaDatos{
         int buscarDirClaveCercana(int bloque, int clave);
         int buscarDirUltimoRegistro(int bloque);
         int buscarDirRegistroVacio(int bloque);
+        int buscarDirRegistroVacioOverflow();
         int getCantidadRegistros(int bloque);
 };
 

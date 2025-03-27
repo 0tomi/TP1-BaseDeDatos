@@ -104,8 +104,8 @@ AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, str
 */
 AreaDatos::Estado AreaDatos::insercionBloqueLleno(int block, int clave, string &dato)
 {
-    if(getOccupationRate(PMAX+1) < 100){
-        auto posRegistroVacio = this->buscarDirRegistroVacio(PMAX+1);
+    if(!isOverflowFull()){
+        auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
         this->registros[posRegistroVacio] = {clave, dato, 0};
         return AreaDatos::InsercionIntermedia;
     }else{
@@ -253,6 +253,14 @@ int AreaDatos::buscarDirRegistroVacio(int bloque)
 {
     for (int x = bloque; x < bloque+this->ELM_POR_BLOQ; x++)
         if (registros[x].clave == 0) return x;
+    return -1;
+}
+
+int AreaDatos::buscarDirRegistroVacioOverflow()
+{
+    for(int pos = PMAX+1; pos < OMAX; pos++){
+        if (registros[pos].clave == 0) return pos;
+    }
     return -1;
 }
 
