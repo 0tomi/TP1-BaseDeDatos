@@ -104,58 +104,15 @@ AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, str
 */
 AreaDatos::Estado AreaDatos::insercionBloqueLleno(int block, int clave, string &dato)
 {
-    
-}
-
-/// ######## NO ELIMINO PORQUE SE PUEDE REUTILIZAR, PERO YA NO VA ########
-AreaDatos::Estado AreaDatos::insercionUltimoBloque(int clave, string& dato, int pos)
-{
-    auto cantidadRegistros = this->getCantidadRegistros(pos);
-    int limiteMitad = ELM_POR_BLOQ/2;
-
-    if(cantidadRegistros < limiteMitad){ 
-        auto posNuevoRegistro = this->buscarDirRegistroVacio(pos);
-        this->registros[posNuevoRegistro] = {clave, dato, 0};
+    if(!isOverflowFull()){
+        auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
+        this->ultimoRegistroInsertadoOverflow++;
+        this->registros[posRegistroVacio] = {clave, dato, 0};
         return AreaDatos::InsercionIntermedia;
-    } 
-
-    if (ultimoBloqueInsertado + ELM_POR_BLOQ == PMAX)
-        return AreaDatos::AreaPrimariaLlena;
-
-    auto nuevaPos = this->crearBloque(ultimoBloqueInsertado + ELM_POR_BLOQ);
-    this->registros[nuevaPos] = {clave, dato, 0};
-
-    if(this->ultimoBloqueInsertado+ELM_POR_BLOQ == PMAX)
-        return AreaDatos::AreaPrimariaLlena;
-
-    return AreaDatos::NuevoBloqueCreado;
-}
-
-/// ######## NO ELIMINO PORQUE SE PUEDE REUTILIZAR, PERO YA NO VA ########
-AreaDatos::Estado AreaDatos::insercionBloqueIntermedio(int clave, string& dato, int pos)
-{
-    if (!this->isBlockFull(pos)) {
-        auto posNuevoRegistro = this->buscarDirRegistroVacio(pos);
-        this->registros[posNuevoRegistro] = {clave, dato, 0};
-        this->ordenarBloque(pos);
-        return AreaDatos::InsercionIntermedia;
+    }else{
+        return AreaDatos::OverflowLleno;
     }
-
-    // Caso 2.c
-    if (isOverflowFull())
-        return AreaDatos::OverflowLleno;
-
-    // Caso 2.a y 2.b
-    auto registroSinOverflow = this->buscarDirRegistroSinDireccion(pos, clave);
-    this->ultimoRegistroInsertadoOverflow++;
-    this->registros[this->ultimoRegistroInsertadoOverflow] = {clave, dato, 0};
-    this->registros[registroSinOverflow].dir = this->ultimoRegistroInsertadoOverflow;
-    
-    if (isOverflowFull())
-        return AreaDatos::OverflowLleno;
-    return AreaDatos::InsercionIntermedia;
 }
-/// ######## FIN DE FUNCIONES A ELIMINAR ########
 
 string* AreaDatos::consultar(int pos, int clave){
     int posRegistroBuscado = this->buscarDirClave(pos, clave);
@@ -186,7 +143,11 @@ bool AreaDatos::ordenarBloque(int posInit)
     int clavePrimerRegistroAntesDeOrdenar = registros[posInit].clave;
     auto inicioBloque = registros.begin() + posInit;
     auto finalBloque = registros.begin() + (posInit + this->ELM_POR_BLOQ);
-    sort(inicioBloque, finalBloque, [](Registro &a, Registro &b) { return a.clave < b.clave; });
+    sort(inicioBloque, finalBloque, [](Registro &a, Registro &b){ 
+        if (a.clave == 0) return false;
+        if (b.clave == 0) return true;
+        return a.clave < b.clave; 
+    });
     return (clavePrimerRegistroAntesDeOrdenar != registros[posInit].clave);
 }
 

@@ -7,8 +7,6 @@
 #include "Indice.h"
 using namespace std;
 
-
-
 class AreaDatos{
     public:
         enum Estado {
@@ -36,9 +34,6 @@ class AreaDatos{
         Estado insercionBloqueMedioLleno(int block, int clave, string &dato);
         Estado insercionBloqueLleno(int block, int clave, string &dato);
 
-        Estado insercionUltimoBloque(int clave, string& dato, int pos); // ELIMINAR LUEGO
-        Estado insercionBloqueIntermedio(int clave, string& dato, int pos); // ELIMINAR LUEGO
-
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque(int pos);
         int getOccupationRate(int block);
@@ -49,6 +44,7 @@ class AreaDatos{
         int buscarDirUltimoRegistro(int bloque);
         int buscarDirRegistroVacio(int bloque);
         int getCantidadRegistros(int bloque);
+        int buscarDirClave(int bloque, int clave);
 };
 
 #endif // !AREA_DATOS_H
