@@ -1,0 +1,17 @@
+Comportamiento el area de primaria:
+- Se ingresan datos hasta llegar a n/2 de ocupacion en CUALQUIER BLOQUE
+- Al ingresar un nuevo registro en un bloque con ocupacion = n/2, se crea un nuevo bloque con ese nuevo registro SOLO si es mayor al elemento mas grande que contenga el bloque.
+- Si el elemento es menor, no se crea un nuevo bloque, se inserta en ese mismo bloque hasta llenarlo
+(se van insertando hasta que no haya lugar y se va al overflow.
+- El ultimo registro de cada bloque apunta a donde arranca el overflow, TODOS por igual.
+
+Comportamiento del overflow:
+- Se recorre todo el bloque donde iria el dato hasta encontrar una ubicacion disponible. 
+- Si no hay ubicacion, se manda al overflow asi nomas. 
+
+Cosas por hacer:
+[FALTA] Cambiar insercionBloqueIntermedio para insertar datos en el overflow asi nomas, y detectar si el registro es el ultimo para engancharle ahi la direccion del overflow
+
+[FALTA] Cambiar insercionUltimoBloque, para que si se ingrese por ejemplo: 3, 5, y despues se ingresa 4, el 5 se mueva a un nuevo bloque
+
+[FALTA] Si el elemento insertado al bloque es el menor, actualizar la tabla de indices con la direccion nueva de ese menor registro

@@ -7,20 +7,19 @@
 #include "Indice.h"
 using namespace std;
 
-
-
 class AreaDatos{
     public:
         enum Estado {
             InsercionIntermedia,
             NuevoBloqueCreado,
             OverflowLleno,
-            AreaPrimariaLlena
+            AreaPrimariaLlena,
+            PrimerRegistroCambiado
         };
 
         AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
         Estado insertar(int pos, int clave, string dato);
-        string* consultar(int clave); // string luego se reemplaza por Template
+        string* consultar(int pos, int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
         friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
         int getCantidadRegistros();
@@ -31,19 +30,21 @@ class AreaDatos{
         int ultimoRegistroInsertadoOverflow = PMAX+1;
 
         Estado insercionSinBloques(int clave, string& dato);
-        Estado insercionUltimoBloque(int clave, string& dato, int pos);
-        Estado insercionBloqueIntermedio(int clave, string& dato, int pos);
+        Estado insercionComun(int block, int clave, string&dato);
+        Estado insercionBloqueMedioLleno(int block, int clave, string &dato);
+        Estado insercionBloqueLleno(int block, int clave, string &dato);
 
-        void ordenarBloque(int posInit);
+        bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque(int pos);
-        bool isBlockFull(int pos);
+        int getOccupationRate(int block);
         bool isLastBlock(int pos);
         bool isOverflowFull();
         int buscarDirRegistroSinDireccion(int bloque, int clave);
         int buscarDirClaveCercana(int bloque, int clave);
+        int buscarDirUltimoRegistro(int bloque);
         int buscarDirRegistroVacio(int bloque);
         int getCantidadRegistros(int bloque);
-        int insertarNuevoRegistroEnOverflow(int posBloque, int clave, string dato);
+        int buscarDirClave(int bloque, int clave);
 };
 
 #endif // !AREA_DATOS_H
