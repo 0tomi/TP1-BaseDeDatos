@@ -26,25 +26,31 @@ class AreaDatos{
     private:
         vector<Registro> registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
-        int ultimoBloqueInsertado;
+        int dirUltimoBloqueInsertado = 0;
         int ultimoRegistroInsertadoOverflow = PMAX+1;
+        int CantidadMaximaBloques;
 
         Estado insercionSinBloques(int clave, string& dato);
         Estado insercionComun(int block, int clave, string&dato);
+
         Estado insercionBloqueMedioLleno(int block, int clave, string &dato);
+        Estado insercionComunEnBloque(int block, int clave, string &dato);
+        Estado insercionPorFueraDelBloque(int clave, string& dato);
+
         Estado insercionBloqueLleno(int block, int clave, string &dato);
 
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
-        int crearBloque(int pos);
+        int crearBloque();
         int getOccupationRate(int block);
-        bool isLastBlock(int pos);
         bool isOverflowFull();
-        int buscarDirRegistroSinDireccion(int bloque, int clave);
+        bool isAreaPrimariaLlena();
+
         int buscarDirClaveCercana(int bloque, int clave);
         int buscarDirUltimoRegistro(int bloque);
         int buscarDirRegistroVacio(int bloque);
         int getCantidadRegistros(int bloque);
         int buscarDirClave(int bloque, int clave);
+        pair<int,int> buscarDirClaveMinYMax(int bloque);
 };
 
 #endif // !AREA_DATOS_H

@@ -5,6 +5,19 @@
 #include <iomanip>
 #include "Indice.h"
 
+AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
+    this->ELM_POR_BLOQ = ELM_POR_BLOQ;
+    this->OMAX = OMAX;
+    this->PMAX = PMAX;
+    
+    // Se podria implementar aca un check de seguridad mediante modularidad
+    // Para que la cantidad maxima de bloques siempre sea redonda.
+
+    this->CantidadMaximaBloques = this->PMAX / ELM_POR_BLOQ;
+
+    this->registros.reserve(OMAX);
+}
+
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
     int nroBloque = 0, x;
     os << "+------------------------------------------+" << endl;
@@ -24,18 +37,10 @@ ostream& operator<< (ostream& os, AreaDatos& areaDatos){
     return os;
 }
 
-AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
-    this->ELM_POR_BLOQ = ELM_POR_BLOQ;
-    this->OMAX = OMAX;
-    this->PMAX = PMAX;
-    
-    this->registros.reserve(OMAX);
-}
-
 AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
 {
     if (!CANTIDAD_BLOQUES) 
-        return this->insercionSinBloques(clave, dato);
+        return this->insercionCreandoUnBloque(clave, dato);
     
     auto porcentajeOcupacion = this->getOccupationRate(pos);
 
@@ -47,10 +52,10 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
     return this->insercionBloqueMedioLleno(pos, clave, dato);
 }
 
-AreaDatos::Estado AreaDatos::insercionSinBloques(int clave, string& dato)
+AreaDatos::Estado AreaDatos::insercionCreandoUnBloque(int clave, string& dato)
 {
-    this->crearBloque(0);
-    this->registros[0] = {clave, dato, 0}; // Por default 0 indica que no apunta al overflow.
+    auto dirInsercion = this->crearBloque();
+    this->registros[dirInsercion] = {clave, dato, this->PMAX+1}; // Apunta al overflow.
     return AreaDatos::NuevoBloqueCreado;
 }
 
@@ -89,7 +94,29 @@ AreaDatos::Estado AreaDatos::insercionComun(int block, int clave, string&dato)
 */
 AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, string &dato)
 {
+    auto clavesMinMax = this->buscarDirClaveMinYMax(block);
+    if (clave > clavesMinMax.first && clave < clavesMinMax.second)
+        return this->insercionComunEnBloque(block, clave, dato);
+    if (this->isAreaPrimariaLlena())
+        return this->AreaPrimariaLlena;   // Estado
     
+    return this->insercionCreandoUnBloque(clave, dato);
+}
+
+pair<int,int> AreaDatos::buscarDirClaveMinYMax(int bloque)
+{
+    auto claveMin = bloque;
+    int claveMax = this->buscarDirUltimoRegistro(bloque);
+
+    return {claveMin, claveMax};
+}
+
+AreaDatos::Estado AreaDatos::insercionComunEnBloque(int block, int clave, string &dato)
+{
+    auto posNuevaClave = this->buscarDirRegistroVacio(block);
+    this->registros[posNuevaClave] = {clave, dato, 0};
+    this->ordenarBloque(block);
+    return InsercionIntermedia;
 }
 
 /*
@@ -151,11 +178,15 @@ bool AreaDatos::ordenarBloque(int posInit)
     return (clavePrimerRegistroAntesDeOrdenar != registros[posInit].clave);
 }
 
-int AreaDatos::crearBloque(int pos)
+int AreaDatos::crearBloque()
 {
     this->CANTIDAD_BLOQUES++;
-    this->ultimoBloqueInsertado = pos;
-    return ultimoBloqueInsertado;
+
+    if (CANTIDAD_BLOQUES-1 == 0)
+        return this->dirUltimoBloqueInsertado;
+
+    dirUltimoBloqueInsertado = dirUltimoBloqueInsertado + this->ELM_POR_BLOQ;
+    return dirUltimoBloqueInsertado;
 }
 
 int AreaDatos::getOccupationRate(int block)
@@ -169,23 +200,16 @@ int AreaDatos::getOccupationRate(int block)
     return porcentage;
 }
 
-bool AreaDatos::isLastBlock(int pos)
-{
-    return pos == this->ultimoBloqueInsertado;
-}
-
 bool AreaDatos::isOverflowFull()
 {
     return (this->ultimoRegistroInsertadoOverflow == this->OMAX - 1);
 }
 
-int AreaDatos::buscarDirRegistroSinDireccion(int pos, int clave){
-    auto dirClaveCercana = this->buscarDirClaveCercana(pos, clave);
-    while (registros[dirClaveCercana].dir != 0)
-        dirClaveCercana = registros[dirClaveCercana].dir;
-
-    return dirClaveCercana;
+bool AreaDatos::isAreaPrimariaLlena()
+{
+    return (this->CANTIDAD_BLOQUES == CantidadMaximaBloques);
 }
+
 
 int AreaDatos::buscarDirClaveCercana(int pos, int clave)
 {
