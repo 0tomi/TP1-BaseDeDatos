@@ -4,13 +4,18 @@
 #include <iomanip>
 
 ostream& operator <<(ostream& os, AreaIndices& areaIndices){
-    os << "+---------------[Tabla de Indices]--------------+" << endl;
+	if (areaIndices.tablaIndices.size() == 0) {
+		os << "[ Tabla de indices vacía ] ";
+		return os;
+	}
+
+	os << "|----[Clave]---|---[Indice]---|\n";
     for(auto& indices: areaIndices.tablaIndices){
         os << "|-----------------------------|" << endl;
-        os << "| " << setw(10) << indices.clave << " | " << setw(10) << indices.direccion << " |" << endl;
+        os << "| " << setw(11) << indices.clave << " | " << setw(13) << indices.direccion << " |" << endl;
         os << "|-----------------------------|" << endl;
     }
-    os << "+----------------------------------------------+";
+
     return os;
 }
 

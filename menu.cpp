@@ -2,7 +2,9 @@
 #define MENU_CPP
 
 #include <iostream>
-#include "Archivo.h"
+#include <conio.h>
+#include <cstdlib>
+#include "Archivo.cpp"
 using namespace std;
 
 Archivo definir_archivo(){
@@ -31,7 +33,8 @@ void menu_insercion(Archivo& archive){
 	cin >> dato;
 
 	string estadoInsercion = archive.insertar(clave, dato);
-	cout << estadoInsercion;
+	cout << estadoInsercion
+		<< "\nTermino insercion.";
 }
 
 void menu_consulta(Archivo& archive){
@@ -53,40 +56,37 @@ void menu_mostrarAIyAD(Archivo& archive){
 }
 
 void menu_global(Archivo& archive){
-	int option;
+	char option;
 	do{
+		cout << "\n===============[ MENU ]===============\n";
 		cout << "1. Insertar en Archivo " << endl;
 		cout << "2. Consultar en Archivo" << endl;
 		cout << "3. Mostrar Area de indices y Area de datos" << endl;
-		cout << "4. Salir" << endl;
-		cout << "seleccion opcion: " << endl;
-		cin >> option;
-
+		cout << "4. Salir";
+		cout << "\n===============[ MENU ]===============\n";
+		option = getch();
+		
 		switch(option){
-		case 1:
+		case '1':
 			menu_insercion(archive);
 			break;
-		case 2:
+		case '2':
 			menu_consulta(archive);
 			break;
-		case 3:
+		case '3':
 			menu_mostrarAIyAD(archive);
 			break;
-		case 4:
-			break;
-		default:
-			cout << "No valido" << endl;
-			break;
-			}
-		} while(option != 4);
-
-	
+		} 
+	} while(option != '4');
 }
 
 int main(int argc, char *argv[]) {
 
-	Archivo archive = definir_archivo();
-	menu_global(archive);
+	//Archivo archive = definir_archivo();
+	Archivo arch(4, 16, 24);
+	arch.insertar(4, "test1");
+	arch.insertar(8, "test2");
+	menu_global(arch);
 	
 	return 0;
 }

@@ -19,35 +19,41 @@ AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
 }
 
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
-    int nroBloque = 0, x;
-    os << "+------------------------------------------+" << endl;
-    os << "| BLOQUE " << nroBloque << setw(34) << "|" << endl;
-    os << "|------------------------------------------|" << endl;
-    for(x = 0; x < areaDatos.OMAX; x++ ){
-
-        if(x % areaDatos.ELM_POR_BLOQ == 0 && x != 0) {
-            nroBloque++;
-            os << "| BLOQUE " << nroBloque << endl;
-            os << "|------------------------------------------|" << endl;
-        }
-        os << "| " << setw(5) << areaDatos.registros[x].clave << " | " << setw(5) << areaDatos.registros[x].datos << " |" << setw(5) << areaDatos.registros[x].dir << endl;
-        os << "|------------------------------------------|" << endl;
+    if (areaDatos.CANTIDAD_BLOQUES == 0){
+        os << "[ Area de datos vacia (Sin bloques) ]";
+        return os;
     }
-    os << "+------------------------------------------+" << endl;
+    
+    int ultimaPosOcupada = areaDatos.CANTIDAD_BLOQUES * areaDatos.ELM_POR_BLOQ;
+    // no se si se empieza a contar desde el bloque 0 o el 1, dejo 1 ante la duda
+    int nroBloque = 1;
+
+    os << "+|--[Clave]--|--[Indice]--|--[Direccion]--|+" << endl;
+    os << "|------------------------------------------|" << endl;
+    for (int i = 0; i < ultimaPosOcupada; i += areaDatos.ELM_POR_BLOQ) {
+        os << "| BLOQUE " << nroBloque << setw(34) << "|" << endl;
+        os << "|------------------------------------------|" << endl;
+        for (int j = i; j < i + areaDatos.ELM_POR_BLOQ; j++)
+            os << "| " << setw(5) << areaDatos.registros[j].clave << " | " << setw(5) << areaDatos.registros[j].datos << " |" << setw(5) << areaDatos.registros[j].dir << endl
+               << "|------------------------------------------|" << endl;
+
+        nroBloque++;
+    }
+
     return os;
 }
 
-AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string dato)
+AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string& dato)
 {
     if (!CANTIDAD_BLOQUES) 
         return this->insercionCreandoUnBloque(clave, dato);
     
     auto porcentajeOcupacion = this->getOccupationRate(pos);
 
-    if (porcentajeOcupacion < 50);
+    if (porcentajeOcupacion < 50)
         return this->insercionComun(pos, clave, dato);
     if (porcentajeOcupacion == 100)
-        return this->insercionBloqueLleno(pos, clave, dato);
+        return this->insercionBloqueLleno(clave, dato);
     
     return this->insercionBloqueMedioLleno(pos, clave, dato);
 }
@@ -129,7 +135,7 @@ AreaDatos::Estado AreaDatos::insercionComunEnBloque(int block, int clave, string
         B.1- Se retorna OverflowLleno.
 
 */
-AreaDatos::Estado AreaDatos::insercionBloqueLleno(int block, int clave, string &dato)
+AreaDatos::Estado AreaDatos::insercionBloqueLleno(int clave, string &dato)
 {
     if(!isOverflowFull()){
         auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
@@ -159,8 +165,8 @@ string* AreaDatos::consultar(int pos, int clave){
 
 vector<Indice> AreaDatos::obtenerTablaIndices(){
     vector<Indice>indices;
-    auto bloques = this->CANTIDAD_BLOQUES;
-    for(int i = 0; i <= this->CANTIDAD_BLOQUES*ELM_POR_BLOQ; i += ELM_POR_BLOQ) 
+    auto bloques = this->CANTIDAD_BLOQUES * this->ELM_POR_BLOQ;
+    for(int i = 0; i < bloques; i += ELM_POR_BLOQ) 
         indices.push_back({registros[i].clave,i});
     return indices;
 }
@@ -209,7 +215,6 @@ bool AreaDatos::isAreaPrimariaLlena()
 {
     return (this->CANTIDAD_BLOQUES == CantidadMaximaBloques);
 }
-
 
 int AreaDatos::buscarDirClaveCercana(int pos, int clave)
 {

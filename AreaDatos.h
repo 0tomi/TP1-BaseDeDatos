@@ -18,11 +18,11 @@ class AreaDatos{
         };
 
         AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
-        Estado insertar(int pos, int clave, string dato);
+        Estado insertar(int pos, int clave, string& dato);
         string* consultar(int pos, int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
         friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
-        int getCantidadRegistros();
+
     private:
         vector<Registro> registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
@@ -30,14 +30,13 @@ class AreaDatos{
         int ultimoRegistroInsertadoOverflow = PMAX+1;
         int CantidadMaximaBloques;
 
-        Estado insercionSinBloques(int clave, string& dato);
+        Estado insercionCreandoUnBloque(int clave, string & ato);
         Estado insercionComun(int block, int clave, string&dato);
 
         Estado insercionBloqueMedioLleno(int block, int clave, string &dato);
         Estado insercionComunEnBloque(int block, int clave, string &dato);
-        Estado insercionPorFueraDelBloque(int clave, string& dato);
 
-        Estado insercionBloqueLleno(int block, int clave, string &dato);
+        Estado insercionBloqueLleno(int clave, string &dato);
 
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque();
@@ -72,7 +71,7 @@ b) Los registros se encuentran ubicados en orden ascendente de su clave //! HACE
 c) Cuando la misma es cero se supone un elemento vacío del arreglo. //! HACER
 d) Este arreglo de registros está dividido en dos partes, la primera, llamada el
 área primaria de datos, cuyo tamaño está dado por la variable PMAX, y la de Overflow,
-que inicia en PMAX+1 = OVER, y que llega hasta OMAX (dimensión del arreglo). //* HACIENDO
+que inicia en PMAX+1 = OVER, y que llega hasta OMAX (dimensión del arreglo). // HACIENDO
 -------------------------------------------------------------------------------------------
 //! HACER
 Area de datos devuelve un int tras la inserción, estos int significan distintos estados:
