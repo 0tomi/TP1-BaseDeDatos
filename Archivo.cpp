@@ -16,33 +16,26 @@ std::string* Archivo::consulta(int clave)
 
 std::string Archivo::insertar(int clave, std::string dato)
 {
-    cout << "Entrando a consulta";
     auto direccion = this->tablaIndices.consultar(clave);
-    cout << "\nEntrando a insercion";
     auto codigo = this->tablaDatos.insertar(direccion, clave, dato);
-    cout << "\nEvaluando codigo " << codigo;
     switch (codigo){
         case AreaDatos::InsercionIntermedia: 
-        cout << "\nInsercionIntermedia ";
             this->lastWarning = "";
             break;
  
         case AreaDatos::OverflowLleno:
-        cout << "\nOV llena ";
             this->lastWarning = "Insercion realizada al final del overflow, overflow lleno, porfavor reorganizar..";
             break;
 
         case AreaDatos::AreaPrimariaLlena:
-            cout << "\nArea primaria llena ";
             this->lastWarning = "Ultimo bloque del area primaria colocado, sin espacio para mas bloques.";
             break;
         // Se creo un nuevo bloque / Se cambio de lugar el primer registro de un bloque.
         default:
-            cout << "\nEntro a nuevo bloque ";
+
             this->tablaIndices.actualizarTabla( this->tablaDatos.obtenerTablaIndices() );
             this->lastWarning = "";
     }
-    cout << "\nCodigo evaluado";
     return this->lastWarning;
 }
 

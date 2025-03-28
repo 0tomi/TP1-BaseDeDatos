@@ -56,8 +56,8 @@ void menu_mostrarAIyAD(Archivo& archive){
 }
 
 void menu_global(Archivo& archive){
-	char option;
-	do{
+	char option = 0;
+	do {
 		cout << "\n===============[ MENU ]===============\n";
 		cout << "1. Insertar en Archivo " << endl;
 		cout << "2. Consultar en Archivo" << endl;
@@ -65,19 +65,19 @@ void menu_global(Archivo& archive){
 		cout << "4. Salir";
 		cout << "\n===============[ MENU ]===============\n";
 		option = getch();
-		
-		switch(option){
-		case '1':
-			menu_insercion(archive);
-			break;
-		case '2':
-			menu_consulta(archive);
-			break;
-		case '3':
-			menu_mostrarAIyAD(archive);
-			break;
-		} 
-	} while(option != '4');
+			switch(option){
+			case '1':
+				menu_insercion(archive);
+				break;
+			case '2':
+				menu_consulta(archive);
+				break;
+			case '3':
+				menu_mostrarAIyAD(archive);
+				break;
+			} 
+
+	}while(option != '4');
 }
 
 int main(int argc, char *argv[]) {
@@ -86,6 +86,8 @@ int main(int argc, char *argv[]) {
 	Archivo arch(4, 16, 24);
 	arch.insertar(4, "test1");
 	arch.insertar(8, "test2");
+	arch.insertar(5, "test2");
+	arch.insertar(10, "test2");
 	menu_global(arch);
 	
 	return 0;

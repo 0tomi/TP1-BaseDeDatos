@@ -15,7 +15,7 @@ AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
 
     this->CantidadMaximaBloques = this->PMAX / ELM_POR_BLOQ;
 
-    this->registros.reserve(OMAX);
+    this->registros.resize(OMAX);
 }
 
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
@@ -49,7 +49,7 @@ AreaDatos::Estado AreaDatos::insertar(int pos, int clave, string& dato)
         return this->insercionCreandoUnBloque(clave, dato);
     
     auto porcentajeOcupacion = this->getOccupationRate(pos);
-
+    
     if (porcentajeOcupacion < 50)
         return this->insercionComun(pos, clave, dato);
     if (porcentajeOcupacion == 100)
@@ -75,7 +75,6 @@ AreaDatos::Estado AreaDatos::insercionComun(int block, int clave, string&dato)
 
     bool primerRegistroCambiado = this->ordenarBloque(block);
     registros[this->buscarDirUltimoRegistro(block)].dir = this->PMAX+1;     // Asignamos al ultimo registro el puntero al overflow
-
     if (primerRegistroCambiado)
         return this->PrimerRegistroCambiado;
     return this->InsercionIntermedia;
@@ -101,6 +100,7 @@ AreaDatos::Estado AreaDatos::insercionComun(int block, int clave, string&dato)
 AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, string &dato)
 {
     auto clavesMinMax = this->buscarDirClaveMinYMax(block);
+    
     if (clave > clavesMinMax.first && clave < clavesMinMax.second)
         return this->insercionComunEnBloque(block, clave, dato);
     if (this->isAreaPrimariaLlena())
@@ -111,8 +111,8 @@ AreaDatos::Estado AreaDatos::insercionBloqueMedioLleno(int block, int clave, str
 
 pair<int,int> AreaDatos::buscarDirClaveMinYMax(int bloque)
 {
-    auto claveMin = bloque;
-    int claveMax = this->buscarDirUltimoRegistro(bloque);
+    auto claveMin = registros[bloque].clave;
+    int claveMax = registros[this->buscarDirUltimoRegistro(bloque)].clave;
 
     return {claveMin, claveMax};
 }
@@ -176,11 +176,13 @@ bool AreaDatos::ordenarBloque(int posInit)
     int clavePrimerRegistroAntesDeOrdenar = registros[posInit].clave;
     auto inicioBloque = registros.begin() + posInit;
     auto finalBloque = registros.begin() + (posInit + this->ELM_POR_BLOQ);
+    
     sort(inicioBloque, finalBloque, [](Registro &a, Registro &b){ 
         if (a.clave == 0) return false;
         if (b.clave == 0) return true;
         return a.clave < b.clave; 
     });
+    
     return (clavePrimerRegistroAntesDeOrdenar != registros[posInit].clave);
 }
 

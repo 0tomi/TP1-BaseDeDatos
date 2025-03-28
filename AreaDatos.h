@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include "Registro.h"
 #include "Indice.h"
 using namespace std;
