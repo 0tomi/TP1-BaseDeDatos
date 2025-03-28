@@ -13,7 +13,7 @@ Archivo definir_archivo(){
 	cout << "Tamaño del arreglo Area primaria de datos: " << endl;
 	cin >> PMAX;
 	int OMAX;
-	cout << "Tamaño total del arreglo: "; << endl;
+	cout << "Tamaño total del arreglo: " << endl;
 	cin >> OMAX;
 
 	Archivo archive(n, PMAX, OMAX);
