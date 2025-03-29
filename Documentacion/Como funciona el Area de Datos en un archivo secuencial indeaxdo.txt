@@ -1,0 +1,56 @@
+VERSION 1.0
+- Creada a partir de lo que mostró el profe en la clase de consulta de forma grafica.
+
+Caso de Uso: Inserción de un registro.
+1 - Se ingresa la clave junto al dato a guardar al Gestor.
+2 - Gestor recibe la clave.
+3 - Gestor pasa la clave al Area de Indices mediante el método consulta. // Para consultar donde iría esa clave.
+4 - Area de Indices recibe la clave y busca el bloque donde se debería alojar.
+5 - Area de indices retorna la direccion del bloque donde deberia estar.
+6 - Gestor recibe la direccion, se la pasa a el Area de Datos junto a la clave y el dato mediante el metodo insertar.
+7 - Area de Datos inserta el elemento.
+8-A.1 - Area de datos devuelve InsercionIntermedia.
+	8-A.2 - Gestor retorna string vacio al usuario.
+8-B.1 - Area de datos devuelve NuevoBloqueCreado o PrimerRegistroCambiado.
+	8.B.1 - Gestor le pide al Area de Datos un vector de Indices.
+	8.B.2 - Gestor recibe vector de Indices
+	8.B.3 - Gestor manda el vector de Indices a la tabla de Indices mediante el método actualizarTabla
+	8.B.4 - Gestor retorna string vacio.
+8-C.1 - Area de datos devuelve AreaPrimariaLlena.
+	8.C.2 - Gestor retorna "Area primaria llena, reorganizar"
+8-D.1 - Area de datos devuelve OverflowLleno.
+	8.D.2 - Gestor retorna "Overflow lleno, reorganizar"
+
+Caso de Uso: Insercion de un registro en el Area de datos.
+
+Concepto importante: 
+Porcentaje de Ocupacion: Medida que nos dice porcentualmente cuan ocupado esta un bloque, medido usando n/N, siendo n la cantidad de registros que contiene el bloque, y N la cantidad total de registros que PODRIA contener. 
+El resultado se multiplica por 100 para obtener el porcentaje.
+Ejemplo: N = 4 (Un bloque puede contener 4 claves), n = 2 (El bloque sobre el que estoy posado tiene 2 claves)
+2/4 = 1/2 = 0.5 * 100 = 50, el bloque esta ocupado en un 50%.
+
+Casos posibles:
+A - No hay bloques.
+	A.1 - Se crea un nuevo bloque.
+	A.2 - Se inserta la clave en el primer registro.
+	A.3 - Se retorna "NuevoBloqueCreado"
+B - Si hay bloques.
+	B-A - El porcentaje de ocupacion del bloque es menor a 50%
+		B-A.1. Se inserta la clave en el bloque.
+		B-A.2. Se ordena el bloque.
+		B.A.3.A La primer clave no cambio
+			B.A.3.A.1 Se retorna "InsercionIntermedia"
+		B.A.3.B La primer clave cambio
+			B.A.3.B.1 Se retorna "PrimerRegistroCambiado"
+	B-B - El porcentaje de ocupacion del bloque es mayor o igual a 50%
+		B.B.1. Se obtiene la clave de minimo valor del bloque.
+		B.B.2. Se obtiene la clave de maximo valor del bloque.
+		B.B.3.A. La clave a insertar escapa del rango maximo o minimo que contiene el bloque // La clave es mayor a la clave mayor, o menor a la clave menor.
+			B.B.3.A.1. Se repite el caso A.	// Se crea un nuevo bloque y se inserta
+		B.B.3.B. La clave a insertar se encuentra dentro del rango maximo y minimo del bloque.
+			B.B.3.B.1 Se repite el caso B-A con una excepcion:
+				No se retorna PrimerRegistroCambiado, ya que es imposible que la primer clave cambie (Debido a el caso anterior)
+			B.B.3.B.2. Se retorna "InsercionIntermedia".
+	B-C - El porcentaje de ocupacion del bloque es del 100%. 
+		B.C.1. Se inserta el registro en el primer lugar disponible del overflow
+		B.C.2. Se retorna "InsercionIntermedia".
