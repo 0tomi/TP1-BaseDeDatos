@@ -5,10 +5,11 @@
 #include <iomanip>
 #include "Indice.h"
 
-AreaDatos::AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX){
+AreaDatos::AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX){
     this->ELM_POR_BLOQ = ELM_POR_BLOQ;
     this->OMAX = OMAX;
     this->PMAX = PMAX;
+    this->ultimoRegistroInsertadoOverflow = this->PMAX;
     
     // Se podria implementar aca un check de seguridad mediante modularidad
     // Para que la cantidad maxima de bloques siempre sea redonda.
@@ -38,6 +39,17 @@ ostream& operator<< (ostream& os, AreaDatos& areaDatos){
                << "|------------------------------------------|" << endl;
 
         nroBloque++;
+    }
+
+    if (areaDatos.ultimoRegistroInsertadoOverflow != areaDatos.PMAX) {
+        os << "| ============= [ OVERFLOW ] ============= |" << endl
+           << "| ---------------------------------------- |" << endl;
+        int aux = areaDatos.PMAX + 1;
+        while (areaDatos.registros[aux].clave != 0){
+            os << "| " << setw(5) << areaDatos.registros[aux].clave << " | " << setw(5) << areaDatos.registros[aux].datos << " |" << setw(5) << areaDatos.registros[aux].dir << endl
+               << "|------------------------------------------|" << endl;
+            aux++;
+        }
     }
 
     return os;
@@ -138,6 +150,7 @@ AreaDatos::Estado AreaDatos::insercionComunEnBloque(int block, int clave, string
 AreaDatos::Estado AreaDatos::insercionBloqueLleno(int clave, string &dato)
 {
     if(!isOverflowFull()){
+        cout << "realizando inser en " << ultimoRegistroInsertadoOverflow;
         auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
         this->ultimoRegistroInsertadoOverflow++;
         this->registros[posRegistroVacio] = {clave, dato, 0};

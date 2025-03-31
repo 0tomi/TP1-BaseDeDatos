@@ -18,7 +18,7 @@ class AreaDatos{
             PrimerRegistroCambiado
         };
 
-        AreaDatos(int ELM_POR_BLOQ, int OMAX, int PMAX);
+        AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX);
         Estado insertar(int pos, int clave, string& dato);
         string* consultar(int pos, int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
