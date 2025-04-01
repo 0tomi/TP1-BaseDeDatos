@@ -19,13 +19,14 @@ class AreaDatos{
         };
 
         AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX);
+        ~AreaDatos() { delete registros; }
         Estado insertar(int pos, int clave, string& dato);
         string* consultar(int pos, int clave); // string luego se reemplaza por Template
         vector<Indice> obtenerTablaIndices();
         friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
 
     private:
-        vector<Registro> registros;
+        Registro* registros;
         int CANTIDAD_BLOQUES = 0, ELM_POR_BLOQ, OMAX, PMAX;    // ELM_POR_BLOQ = n; OMAX = tamanio maximo array; PMAX = tamanio maximo zona de datos
         int dirUltimoBloqueInsertado = 0;
         int ultimoRegistroInsertadoOverflow = PMAX+1;

@@ -16,7 +16,7 @@ AreaDatos::AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX){
 
     this->CantidadMaximaBloques = this->PMAX / ELM_POR_BLOQ;
 
-    this->registros.resize(OMAX);
+    this->registros = new Registro[OMAX];
 }
 
 ostream& operator<< (ostream& os, AreaDatos& areaDatos){
@@ -35,8 +35,9 @@ ostream& operator<< (ostream& os, AreaDatos& areaDatos){
         os << "| BLOQUE " << nroBloque << setw(34) << "|" << endl;
         os << "|------------------------------------------|" << endl;
         for (int j = i; j < i + areaDatos.ELM_POR_BLOQ; j++)
-            os << "| " << setw(5) << areaDatos.registros[j].clave << " | " << setw(5) << areaDatos.registros[j].datos << " |" << setw(5) << areaDatos.registros[j].dir << endl
-               << "|------------------------------------------|" << endl;
+            if (areaDatos.registros[j].clave != 0)
+                os << "| " << setw(5) << areaDatos.registros[j].clave << " | " << setw(5) << areaDatos.registros[j].datos << " |" << setw(5) << areaDatos.registros[j].dir << endl
+                << "|------------------------------------------|" << endl;
 
         nroBloque++;
     }
@@ -187,8 +188,8 @@ vector<Indice> AreaDatos::obtenerTablaIndices(){
 bool AreaDatos::ordenarBloque(int posInit)
 {
     int clavePrimerRegistroAntesDeOrdenar = registros[posInit].clave;
-    auto inicioBloque = registros.begin() + posInit;
-    auto finalBloque = registros.begin() + (posInit + this->ELM_POR_BLOQ);
+    auto inicioBloque = registros + posInit;        // Por aritmetica de punteros, el compilador sabe que me quiero mover hasta donde esta el bloque.
+    auto finalBloque = registros + (posInit + this->ELM_POR_BLOQ);
     
     sort(inicioBloque, finalBloque, [](Registro &a, Registro &b){ 
         if (a.clave == 0) return false;
