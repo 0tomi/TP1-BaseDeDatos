@@ -2,7 +2,7 @@
 #define INDICE
 
 struct Indice{
-    int clave;
+    int clave = 0;
     int direccion;
 };
 

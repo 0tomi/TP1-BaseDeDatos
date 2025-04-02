@@ -4,16 +4,17 @@
 #include <iomanip>
 
 ostream& operator <<(ostream& os, AreaIndices& areaIndices){
-	if (areaIndices.tablaIndices.size() == 0) {
+	if (areaIndices.cantidad == 0) {
 		os << "[ Tabla de indices vacía ] ";
 		return os;
 	}
 
 	os << "|----[Clave]---|---[Indice]---|\n";
-    for(auto& indices: areaIndices.tablaIndices){
-        os << "|-----------------------------|" << endl;
-        os << "| " << setw(11) << indices.clave << " | " << setw(13) << indices.direccion << " |" << endl;
-        os << "|-----------------------------|" << endl;
+    for(int i = 0; i < areaIndices.capacidad; i++){
+		if (areaIndices.tablaIndices[i].clave != 0 )
+			os << "|-----------------------------|" << endl
+			   << "| " << setw(11) << areaIndices.tablaIndices[i].clave << " | " << setw(13) << areaIndices.tablaIndices[i].direccion << " |" << endl
+			   << "|-----------------------------|" << endl;
     }
 
     return os;
@@ -21,15 +22,16 @@ ostream& operator <<(ostream& os, AreaIndices& areaIndices){
 
 void AreaIndices::organizarIndices(){
 	sort(this->tablaIndices, this->tablaIndices + this->cantidad,[](const Indice& a,const Indice& b){
+		if (a.clave == 0) return false;
+        if (b.clave == 0) return true;
 		return a.clave < b.clave;
 	});
 }
 
-AreaIndices::AreaIndices(int PMAX)
+AreaIndices::AreaIndices(int PMAX): capacidad(PMAX), cantidad(0)
 {
 	this->tablaIndices = new Indice[this->capacidad];
     // Reservamos la cantidad de memoria que tendra el area de indices
-    //this->tablaIndices.reserve(PMAX);
 }
 
 AreaIndices::~AreaIndices(){
