@@ -168,12 +168,12 @@ string* AreaDatos::consultar(int pos, int clave){
         for (int x = posOverflow; (x < this->OMAX) && (registros[x].clave != clave); x++)
             posRegistroBuscado = x;
 
+        posRegistroBuscado++;
+
         if (posRegistroBuscado == this->OMAX)
-            posRegistroBuscado = -1;
+            return nullptr;
     }
 
-    if (posRegistroBuscado == -1)
-        return nullptr;
     return &(registros[posRegistroBuscado].datos);
 }
 
