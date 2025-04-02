@@ -20,20 +20,25 @@ ostream& operator <<(ostream& os, AreaIndices& areaIndices){
 }
 
 void AreaIndices::organizarIndices(){
-	sort(this->tablaIndices.begin(),this->tablaIndices.end(),[](const Indice& a,const Indice& b){
+	sort(this->tablaIndices, this->tablaIndices + this->cantidad,[](const Indice& a,const Indice& b){
 		return a.clave < b.clave;
 	});
 }
 
-AreaIndices::AreaIndices(int tam)
+AreaIndices::AreaIndices(int PMAX)
 {
+	this->tablaIndices = new Indice[this->capacidad];
     // Reservamos la cantidad de memoria que tendra el area de indices
-    this->tablaIndices.reserve(tam);
+    //this->tablaIndices.reserve(PMAX);
+}
+
+AreaIndices::~AreaIndices(){
+	delete []tablaIndices;
 }
 
 int AreaIndices::consultar(int claveBuscar){
 	int primerIndice = 0;
-	int ultimoIndice = this->tablaIndices.size() - 1;
+	int ultimoIndice = this->cantidad - 1;
 	int bloque_cercano = -1; 									//Si no se encuentra
 	while(primerIndice <= ultimoIndice){
 		int mitad = (primerIndice + ultimoIndice) / 2;
@@ -53,7 +58,8 @@ int AreaIndices::consultar(int claveBuscar){
 }
 
 void AreaIndices::actualizarTabla(vector<Indice> newIndices){
-	this->tablaIndices = move(newIndices);
+	move(newIndices.begin(), newIndices.end(), this->tablaIndices);
+	this->cantidad = newIndices.size();
 	this->organizarIndices();
 }
 

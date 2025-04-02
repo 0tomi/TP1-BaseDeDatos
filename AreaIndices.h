@@ -10,13 +10,14 @@ using namespace std;
 
 class AreaIndices{
 	private:
-		vector<Indice> tablaIndices;
-		int tamanio;
+		Indice* tablaIndices;
+		int capacidad;
+		int cantidad;
 
 		void organizarIndices();
 		friend ostream& operator<< (ostream& os, AreaIndices& areaIndices);
 	public:
- 		AreaIndices(int tam);
+ 		AreaIndices(int PMAX): capacidad(PMAX), cantidad(0);
  		int consultar(int claveBuscar);
  		void actualizarTabla(vector<Indice> newIndices);
 };
