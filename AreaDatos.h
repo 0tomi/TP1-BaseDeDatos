@@ -8,6 +8,7 @@
 #include "Indice.h"
 using namespace std;
 
+template<typename T>
 class AreaDatos{
     public:
         enum Estado {
@@ -20,8 +21,8 @@ class AreaDatos{
 
         AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX);
         ~AreaDatos() { delete registros; }
-        Estado insertar(int pos, int clave, string& dato);
-        string* consultar(int pos, int clave); // string luego se reemplaza por Template
+        Estado insertar(int pos, int clave, T& dato);
+        T* consultar(int pos, int clave); 
         vector<Indice> obtenerTablaIndices();
         friend ostream& operator<< (ostream& os, AreaDatos& areaDatos);
 
@@ -32,13 +33,13 @@ class AreaDatos{
         int ultimoRegistroInsertadoOverflow = PMAX+1;
         int CantidadMaximaBloques;
 
-        Estado insercionCreandoUnBloque(int clave, string & ato);
-        Estado insercionComun(int block, int clave, string&dato);
+        Estado insercionCreandoUnBloque(int clave, T& dato);
+        Estado insercionComun(int block, int clave, T &dato);
 
-        Estado insercionBloqueMedioLleno(int block, int clave, string &dato);
-        Estado insercionComunEnBloque(int block, int clave, string &dato);
+        Estado insercionBloqueMedioLleno(int block, int clave, T &dato);
+        Estado insercionComunEnBloque(int block, int clave, T &dato);
 
-        Estado insercionBloqueLleno(int clave, string &dato);
+        Estado insercionBloqueLleno(int clave, T &dato);
 
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque();

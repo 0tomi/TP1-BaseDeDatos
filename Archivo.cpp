@@ -3,18 +3,21 @@
 #include "Archivo.h"
 #include <cstdlib>
 
-Archivo::Archivo(int n, int PMAX, int OMAX): tablaDatos(n, PMAX, OMAX), tablaIndices(PMAX/n)
+template<typename T>
+Archivo<T>::Archivo(int n, int PMAX, int OMAX): tablaDatos(n, PMAX, OMAX), tablaIndices(PMAX/n)
 {
     // stuff to do
 }
 
-std::string* Archivo::consulta(int clave)
+template<typename T>
+T* Archivo<T>::consulta(int clave)
 {
     auto direccion = this->tablaIndices.consultar(clave);
     return this->tablaDatos.consultar(direccion, clave);
 }
 
-std::string Archivo::insertar(int clave, std::string dato)
+template<typename T>
+std::string Archivo<T>::insertar(int clave, T& dato)
 {
     auto direccion = this->tablaIndices.consultar(clave);
     auto codigo = this->tablaDatos.insertar(direccion, clave, dato);
@@ -24,7 +27,7 @@ std::string Archivo::insertar(int clave, std::string dato)
             break;
  
         case AreaDatos::OverflowLleno:
-            this->lastWarning = "Insercion realizada al final del overflow, overflow lleno, porfavor reorganizar..";
+            this->lastWarning = "Insercion realizada al final del overflow, overflow lleno, por favor reorganizar..";
             break;
 
         case AreaDatos::AreaPrimariaLlena:
@@ -39,17 +42,20 @@ std::string Archivo::insertar(int clave, std::string dato)
     return this->lastWarning;
 }
 
-AreaDatos* Archivo::verTablaDatos()
+template<typename T>
+AreaDatos<T>* Archivo<T>::verTablaDatos()
 {
     return &(this->tablaDatos);
 }
 
-AreaIndices* Archivo::verTablaIndices()
+template<typename T>
+AreaIndices* Archivo<T>::verTablaIndices()
 {
     return &(this->tablaIndices);
 }
 
-ostream& operator<< (ostream& os, Archivo& archivo)
+template<typename T>
+ostream& operator<< (ostream& os, Archivo<T>& archivo)
 {
     os << "\n+---------------[Tabla de Indices]--------------+" << endl;
     os << archivo.tablaIndices;
@@ -58,7 +64,8 @@ ostream& operator<< (ostream& os, Archivo& archivo)
     return os;
 }
 
-std::string Archivo::warning()
+template<typename T>
+std::string Archivo<T>::warning()
 {
     return this->lastWarning;
 }

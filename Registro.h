@@ -1,10 +1,10 @@
 #ifndef REGISTRO
 #define REGISTRO
-#include <string>
 
+template<typename T>
 struct Registro{
     int clave = 0;
-    std::string datos;
+    T datos;
     int dir;
 };
 #endif // REGISTRO
