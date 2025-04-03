@@ -173,12 +173,11 @@ AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int clave, T &dato)
 template<typename T>
 T* AreaDatos<T>::consultar(int pos, int clave){
     int posRegistroBuscado = this->buscarDirClave(pos, clave);
-    if (posRegistroBuscado == -1) {
-        auto posOverflow = this->registros[this->buscarDirUltimoRegistro(pos)].dir;
-        for (int x = posOverflow; (x < this->OMAX) && (registros[x].clave != clave); x++)
-            posRegistroBuscado = x;
 
-        posRegistroBuscado++;
+    if (posRegistroBuscado == -1) {
+        posRegistroBuscado = this->registros[this->buscarDirUltimoRegistro(pos)].dir;
+        while (posRegistroBuscado < this->OMAX && this->registros[posRegistroBuscado].clave != clave)
+            posRegistroBuscado++;
 
         if (posRegistroBuscado == this->OMAX)
             return nullptr;

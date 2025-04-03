@@ -17,7 +17,8 @@ class AreaIndices{
 		void organizarIndices();
 		friend ostream& operator<< (ostream& os, AreaIndices& areaIndices);
 	public:
- 		AreaIndices(int PMAX): capacidad(PMAX), cantidad(0);
+ 		AreaIndices(int PMAX);
+ 		~AreaIndices();
  		int consultar(int claveBuscar);
  		void actualizarTabla(vector<Indice> newIndices);
 };
