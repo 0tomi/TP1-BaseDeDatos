@@ -17,7 +17,7 @@ T* Archivo<T>::consulta(int clave)
 }
 
 template<typename T>
-std::string Archivo<T>::insertar(int clave, T& dato)
+std::string Archivo<T>::insertar(int clave, T dato)
 {
     auto direccion = this->tablaIndices.consultar(clave);
     auto codigo = this->tablaDatos.insertar(direccion, clave, dato);

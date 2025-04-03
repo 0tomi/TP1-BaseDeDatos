@@ -9,7 +9,7 @@ class Archivo{
 public:
     Archivo(int n, int PMAX, int OMAX);
     T* consulta (int clave);    // Luego implementamos T en vez de string
-    string insertar(int clave, T& dato); // Luego implementamos T en vez de string
+    string insertar(int clave, T dato); // Luego implementamos T en vez de string
     AreaDatos<T>* verTablaDatos();
     AreaIndices* verTablaIndices();
     friend ostream& operator<< (ostream& os, Archivo& archivo);
@@ -17,7 +17,7 @@ public:
     
 private:
     string lastWarning;
-    AreaDatos tablaDatos;
+    AreaDatos<T> tablaDatos;
     AreaIndices tablaIndices;
 };
 
