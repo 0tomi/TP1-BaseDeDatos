@@ -22,15 +22,15 @@ std::string Archivo<T>::insertar(int clave, T dato)
     auto direccion = this->tablaIndices.consultar(clave);
     auto codigo = this->tablaDatos.insertar(direccion, clave, dato);
     switch (codigo){
-        case AreaDatos::InsercionIntermedia: 
+        case AreaDatos<T>::InsercionIntermedia: 
             this->lastWarning = "";
             break;
  
-        case AreaDatos::OverflowLleno:
+        case AreaDatos<T>::OverflowLleno:
             this->lastWarning = "Insercion realizada al final del overflow, overflow lleno, por favor reorganizar..";
             break;
 
-        case AreaDatos::AreaPrimariaLlena:
+        case AreaDatos<T>::AreaPrimariaLlena:
             this->lastWarning = "Ultimo bloque del area primaria colocado, sin espacio para mas bloques.";
             break;
         // Se creo un nuevo bloque / Se cambio de lugar el primer registro de un bloque.
@@ -52,16 +52,6 @@ template<typename T>
 AreaIndices* Archivo<T>::verTablaIndices()
 {
     return &(this->tablaIndices);
-}
-
-template<typename T>
-ostream& operator<< (ostream& os, Archivo<T>& archivo)
-{
-    os << "\n+---------------[Tabla de Indices]--------------+" << endl;
-    os << archivo.tablaIndices;
-    os << "\n+---------------[Tabla de datos]--------------+" << endl;
-    os << archivo.tablaDatos;
-    return os;
 }
 
 template<typename T>

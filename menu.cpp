@@ -7,7 +7,7 @@
 #include "Archivo.cpp"
 using namespace std;
 
-Archivo definir_archivo(){
+Archivo<string> definir_archivo(){
 	int n;
 	cout << "Tamaño de registros por bloque: " << endl;
 	cin >> n;
@@ -18,12 +18,12 @@ Archivo definir_archivo(){
 	cout << "Tamaño total del arreglo: " << endl;
 	cin >> OMAX;
 
-	Archivo archive(n, PMAX, OMAX);
+	Archivo<string> archive(n, PMAX, OMAX);
 	return archive;
 
 }
 
-void menu_insercion(Archivo& archive){
+void menu_insercion(Archivo<string>& archive){
 	int clave;
 	string dato;
 
@@ -37,7 +37,7 @@ void menu_insercion(Archivo& archive){
 		<< "\nTermino insercion.";
 }
 
-void menu_consulta(Archivo& archive){
+void menu_consulta(Archivo<string>& archive){
 	int clave;
 
 	cout << "Clave a consultar: " << endl;
@@ -51,11 +51,11 @@ void menu_consulta(Archivo& archive){
 	}
 }
 
-void menu_mostrarAIyAD(Archivo& archive){
+void menu_mostrarAIyAD(Archivo<string>& archive){
 	cout << archive << endl;
 }
 
-void menu_global(Archivo& archive){
+void menu_global(Archivo<string>& archive){
 	char option = 0;
 	do {
 		cout << "\n===============[ MENU ]===============\n";

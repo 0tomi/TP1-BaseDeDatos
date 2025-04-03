@@ -2,64 +2,25 @@
 #define AREA_DATOS_CPP
 
 #include "AreaDatos.h"
-#include <iomanip>
 #include "Indice.h"
 
 template<typename T>
-AreaDatos<T>::AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX){
-    this->ELM_POR_BLOQ = ELM_POR_BLOQ;
-    this->OMAX = OMAX;
-    this->PMAX = PMAX;
-    this->ultimoRegistroInsertadoOverflow = this->PMAX;
+AreaDatos<T>::AreaDatos(int _ELM_POR_BLOQ, int _PMAX, int _OMAX): PMAX(_PMAX){
+    this->ELM_POR_BLOQ = _ELM_POR_BLOQ;
+    this->OMAX = _OMAX;
+    this->PMAX = _PMAX;
+    this->ultimoRegistroInsertadoOverflow = this->PMAX; // Porque antes de la insercion incrementamos la pos en 1, sino seria PMAX+1
     
     // Se podria implementar aca un check de seguridad mediante modularidad
     // Para que la cantidad maxima de bloques siempre sea redonda.
 
     this->CantidadMaximaBloques = this->PMAX / ELM_POR_BLOQ;
 
-    this->registros = new Registro[OMAX];
+    this->registros = new Registro<T>[OMAX];
 }
 
 template<typename T>
-ostream& operator<< (ostream& os, AreaDatos<T>& areaDatos){
-    if (areaDatos.CANTIDAD_BLOQUES == 0){
-        os << "[ Area de datos vacia (Sin bloques) ]";
-        return os;
-    }
-    
-    int ultimaPosOcupada = areaDatos.CANTIDAD_BLOQUES * areaDatos.ELM_POR_BLOQ;
-    // no se si se empieza a contar desde el bloque 0 o el 1, dejo 1 ante la duda
-    int nroBloque = 1;
-
-    os << "+|--[Clave]--|--[Indice]--|--[Direccion]--|+" << endl;
-    os << "|------------------------------------------|" << endl;
-    for (int i = 0; i < ultimaPosOcupada; i += areaDatos.ELM_POR_BLOQ) {
-        os << "| BLOQUE " << nroBloque << setw(34) << "|" << endl;
-        os << "|------------------------------------------|" << endl;
-        for (int j = i; j < i + areaDatos.ELM_POR_BLOQ; j++)
-            if (areaDatos.registros[j].clave != 0)
-                os << "| " << setw(5) << areaDatos.registros[j].clave << " | " << setw(5) << areaDatos.registros[j].datos << " |" << setw(5) << areaDatos.registros[j].dir << endl
-                << "|------------------------------------------|" << endl;
-
-        nroBloque++;
-    }
-
-    if (areaDatos.ultimoRegistroInsertadoOverflow != areaDatos.PMAX) {
-        os << "| ============= [ OVERFLOW ] ============= |" << endl
-           << "| ---------------------------------------- |" << endl;
-        int aux = areaDatos.PMAX + 1;
-        while (areaDatos.registros[aux].clave != 0){
-            os << "| " << setw(5) << areaDatos.registros[aux].clave << " | " << setw(5) << areaDatos.registros[aux].datos << " |" << setw(5) << areaDatos.registros[aux].dir << endl
-               << "|------------------------------------------|" << endl;
-            aux++;
-        }
-    }
-
-    return os;
-}
-
-template<typename T>
-AreaDatos<T>::Estado AreaDatos<T>::insertar(int pos, int clave, T& dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insertar(int pos, int clave, T& dato)
 {
     if (!CANTIDAD_BLOQUES) 
         return this->insercionCreandoUnBloque(clave, dato);
@@ -74,8 +35,8 @@ AreaDatos<T>::Estado AreaDatos<T>::insertar(int pos, int clave, T& dato)
     return this->insercionBloqueMedioLleno(pos, clave, dato);
 }
 
-template<typename T>
-AreaDatos<T>::Estado AreaDatos<T>::insercionCreandoUnBloque(int clave, T& dato)
+template<class T>
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionCreandoUnBloque(int clave, T& dato)
 {
     auto dirInsercion = this->crearBloque();
     this->registros[dirInsercion] = {clave, dato, this->PMAX+1}; // Apunta al overflow.
@@ -85,7 +46,7 @@ AreaDatos<T>::Estado AreaDatos<T>::insercionCreandoUnBloque(int clave, T& dato)
 
 template<typename T>
 // Posibles salidas: InsercionIntermedia, PrimerRegistroCambiado.
-AreaDatos<T>::Estado AreaDatos<T>::insercionComun(int block, int clave, T&dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionComun(int block, int clave, T&dato)
 {
     registros[this->buscarDirUltimoRegistro(block)].dir = 0;    // Limpio antes de ingresar el registro, en caso de que cambie el ultimo.
 
@@ -117,7 +78,7 @@ AreaDatos<T>::Estado AreaDatos<T>::insercionComun(int block, int clave, T&dato)
                 B.A.1 - Se retorna AreaPrimariaLlena.
 */
 template<typename T>
-AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueMedioLleno(int block, int clave, T &dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueMedioLleno(int block, int clave, T &dato)
 {
     auto clavesMinMax = this->buscarDirClaveMinYMax(block);
     
@@ -138,7 +99,7 @@ pair<int,int> AreaDatos<T>::buscarDirClaveMinYMax(int bloque)
     return {claveMin, claveMax};
 }
 template<typename T>
-AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, int clave, T &dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, int clave, T &dato)
 {
     auto posNuevaClave = this->buscarDirRegistroVacio(block);
     this->registros[posNuevaClave] = {clave, dato, 0};
@@ -157,7 +118,7 @@ AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, int clave, 
 
 */
 template<typename T>
-AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int clave, T &dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int clave, T &dato)
 {
     if(!isOverflowFull()){
         cout << "realizando inser en " << ultimoRegistroInsertadoOverflow;
@@ -202,7 +163,7 @@ bool AreaDatos<T>::ordenarBloque(int posInit)
     auto inicioBloque = registros + posInit;        // Por aritmetica de punteros, el compilador sabe que me quiero mover hasta donde esta el bloque.
     auto finalBloque = registros + (posInit + this->ELM_POR_BLOQ);
     
-    sort(inicioBloque, finalBloque, [](Registro &a, Registro &b){ 
+    sort(inicioBloque, finalBloque, [](Registro<T> &a, Registro<T> &b){ 
         if (a.clave == 0) return false;
         if (b.clave == 0) return true;
         return a.clave < b.clave; 

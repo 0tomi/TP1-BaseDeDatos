@@ -1,7 +1,7 @@
 #ifndef REGISTRO
 #define REGISTRO
 
-template<typename T>
+template<class T>
 struct Registro{
     int clave = 0;
     T datos;
