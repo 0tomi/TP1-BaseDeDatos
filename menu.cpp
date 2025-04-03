@@ -83,7 +83,7 @@ void menu_global(Archivo& archive){
 int main(int argc, char *argv[]) {
 
 	//Archivo archive = definir_archivo();
-	Archivo arch(4, 16, 24);
+	Archivo<string> arch(4, 16, 24);
 	arch.insertar(3, "test1");
 	arch.insertar(8, "test2");
 	arch.insertar(5, "test3");
