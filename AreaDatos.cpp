@@ -121,7 +121,6 @@ template<typename T>
 typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int clave, T &dato)
 {
     if(!isOverflowFull()){
-        cout << "realizando inser en " << ultimoRegistroInsertadoOverflow;
         auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
         this->ultimoRegistroInsertadoOverflow++;
         this->registros[posRegistroVacio] = {clave, dato, 0};
