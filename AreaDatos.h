@@ -66,7 +66,6 @@ ostream& operator<< (ostream& os, AreaDatos<T>& areaDatos){
     }
     
     int ultimaPosOcupada = areaDatos.CANTIDAD_BLOQUES * areaDatos.ELM_POR_BLOQ;
-    // no se si se empieza a contar desde el bloque 0 o el 1, dejo 1 ante la duda
     int nroBloque = 1;
 
     os << "+|--[Clave]--|--[Indice]--|--[Direccion]--|+" << endl;

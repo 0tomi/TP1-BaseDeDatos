@@ -8,8 +8,8 @@ template<class T>
 class Archivo{
 public:
     Archivo(int n, int PMAX, int OMAX);
-    T* consulta (int clave);    // Luego implementamos T en vez de string
-    string insertar(int clave, T dato); // Luego implementamos T en vez de string
+    T* consulta (int clave);    
+    string insertar(int clave, T dato); 
     AreaDatos<T>* verTablaDatos();
     AreaIndices* verTablaIndices();
     std::string warning();

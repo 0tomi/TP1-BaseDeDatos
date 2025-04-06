@@ -161,7 +161,7 @@ template<typename T>
 bool AreaDatos<T>::ordenarBloque(int posInit)
 {
     int clavePrimerRegistroAntesDeOrdenar = registros[posInit].clave;
-    auto inicioBloque = registros + posInit;        // Por aritmetica de punteros, el compilador sabe que me quiero mover hasta donde esta el bloque.
+    auto inicioBloque = registros + posInit;        
     auto finalBloque = registros + (posInit + this->ELM_POR_BLOQ);
     
     sort(inicioBloque, finalBloque, [](Registro<T> &a, Registro<T> &b){ 
