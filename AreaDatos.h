@@ -42,7 +42,7 @@ class AreaDatos{
         Estado insercionBloqueMedioLleno(int block, int clave, T &dato);
         Estado insercionComunEnBloque(int block, int clave, T &dato);
 
-        Estado insercionBloqueLleno(int lastRegister, int clave, T &dato);
+        Estado insercionBloqueLleno(int block, int clave, T &dato);
 
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque();

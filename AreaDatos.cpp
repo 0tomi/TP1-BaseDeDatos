@@ -30,7 +30,7 @@ typename AreaDatos<T>::Estado AreaDatos<T>::insertar(int block, int clave, T& da
     if (porcentajeOcupacion < 50)
         return this->insercionComun(block, clave, dato);
     if (porcentajeOcupacion == 100)
-        return this->insercionBloqueLleno(buscarDirUltimoRegistro(block), clave, dato);
+        return this->insercionBloqueLleno(block, clave, dato);
     
     return this->insercionBloqueMedioLleno(block, clave, dato);
 }
@@ -115,17 +115,25 @@ typename AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, in
 
 */
 template<typename T>
-typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int lastRegister, int clave, T &dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int block, int clave, T &dato)
 {
-    if(!isOverflowFull()){
-        auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
-        this->ultimoRegistroInsertadoOverflow++;
-        this->registros[posRegistroVacio] = {clave, dato, 0};
-        this->registros[lastRegister].dir = this->PMAX+1;
-        return AreaDatos::InsercionIntermedia;
-    }else{
+    auto clavesMinMax = this->buscarDirClaveMinYMax(block);
+    if (clave > clavesMinMax.first && clave < clavesMinMax.second){
+        if(!isOverflowFull()){
+            auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
+            this->ultimoRegistroInsertadoOverflow++;
+            this->registros[posRegistroVacio] = {clave, dato, 0};
+            this->registros[buscarDirUltimoRegistro(block)].dir = this->PMAX+1;
+            return AreaDatos::InsercionIntermedia;
+        }
+        // Si esta lleno:
         return AreaDatos::OverflowLleno;
     }
+
+    if (this->isAreaPrimariaLlena())
+        return this->AreaPrimariaLlena;
+    
+    return this->insercionCreandoUnBloque(clave, dato);
 }
 
 template<typename T>
@@ -135,7 +143,7 @@ T* AreaDatos<T>::consultar(int pos, int clave){
     if (posRegistroBuscado == -1) {
         if (this->registros[buscarDirUltimoRegistro(pos)].dir == 0)
             return nullptr;
-            
+
         posRegistroBuscado = this->registros[this->buscarDirUltimoRegistro(pos)].dir;
 
         while (posRegistroBuscado < this->OMAX && this->registros[posRegistroBuscado].clave != clave)
