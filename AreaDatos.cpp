@@ -20,26 +20,26 @@ AreaDatos<T>::AreaDatos(int _ELM_POR_BLOQ, int _PMAX, int _OMAX): PMAX(_PMAX){
 }
 
 template<typename T>
-typename AreaDatos<T>::Estado AreaDatos<T>::insertar(int pos, int clave, T& dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insertar(int block, int clave, T& dato)
 {
     if (!CANTIDAD_BLOQUES) 
         return this->insercionCreandoUnBloque(clave, dato);
     
-    auto porcentajeOcupacion = this->getOccupationRate(pos);
+    auto porcentajeOcupacion = this->getOccupationRate(block);
     
     if (porcentajeOcupacion < 50)
-        return this->insercionComun(pos, clave, dato);
+        return this->insercionComun(block, clave, dato);
     if (porcentajeOcupacion == 100)
-        return this->insercionBloqueLleno(clave, dato);
+        return this->insercionBloqueLleno(buscarDirUltimoRegistro(block), clave, dato);
     
-    return this->insercionBloqueMedioLleno(pos, clave, dato);
+    return this->insercionBloqueMedioLleno(block, clave, dato);
 }
 
 template<class T>
 typename AreaDatos<T>::Estado AreaDatos<T>::insercionCreandoUnBloque(int clave, T& dato)
 {
     auto dirInsercion = this->crearBloque();
-    this->registros[dirInsercion] = {clave, dato, this->PMAX+1}; // Apunta al overflow.
+    this->registros[dirInsercion] = {clave, dato, 0}; // Apunta al overflow.
     return AreaDatos::NuevoBloqueCreado;
 }
 
@@ -48,13 +48,10 @@ template<typename T>
 // Posibles salidas: InsercionIntermedia, PrimerRegistroCambiado.
 typename AreaDatos<T>::Estado AreaDatos<T>::insercionComun(int block, int clave, T&dato)
 {
-    registros[this->buscarDirUltimoRegistro(block)].dir = 0;    // Limpio antes de ingresar el registro, en caso de que cambie el ultimo.
-
     auto posNuevoRegistro = this->buscarDirRegistroVacio(block);
     this->registros[posNuevoRegistro] = {clave, dato, 0};
 
     bool primerRegistroCambiado = this->ordenarBloque(block);
-    registros[this->buscarDirUltimoRegistro(block)].dir = this->PMAX+1;     // Asignamos al ultimo registro el puntero al overflow
     if (primerRegistroCambiado)
         return this->PrimerRegistroCambiado;
     return this->InsercionIntermedia;
@@ -118,12 +115,13 @@ typename AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, in
 
 */
 template<typename T>
-typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int clave, T &dato)
+typename AreaDatos<T>::Estado AreaDatos<T>::insercionBloqueLleno(int lastRegister, int clave, T &dato)
 {
     if(!isOverflowFull()){
         auto posRegistroVacio = ultimoRegistroInsertadoOverflow+1;
         this->ultimoRegistroInsertadoOverflow++;
         this->registros[posRegistroVacio] = {clave, dato, 0};
+        this->registros[lastRegister].dir = this->PMAX+1;
         return AreaDatos::InsercionIntermedia;
     }else{
         return AreaDatos::OverflowLleno;
@@ -135,7 +133,11 @@ T* AreaDatos<T>::consultar(int pos, int clave){
     int posRegistroBuscado = this->buscarDirClave(pos, clave);
 
     if (posRegistroBuscado == -1) {
+        if (this->registros[buscarDirUltimoRegistro(pos)].dir == 0)
+            return nullptr;
+            
         posRegistroBuscado = this->registros[this->buscarDirUltimoRegistro(pos)].dir;
+
         while (posRegistroBuscado < this->OMAX && this->registros[posRegistroBuscado].clave != clave)
             posRegistroBuscado++;
 

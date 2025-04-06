@@ -22,7 +22,7 @@ class AreaDatos{
 
         AreaDatos(int ELM_POR_BLOQ, int PMAX, int OMAX);
         ~AreaDatos() { delete registros; }
-        Estado insertar(int pos, int clave, T& dato);
+        Estado insertar(int block, int clave, T& dato);
         T* consultar(int pos, int clave); 
         vector<Indice> obtenerTablaIndices();
 
@@ -42,7 +42,7 @@ class AreaDatos{
         Estado insercionBloqueMedioLleno(int block, int clave, T &dato);
         Estado insercionComunEnBloque(int block, int clave, T &dato);
 
-        Estado insercionBloqueLleno(int clave, T &dato);
+        Estado insercionBloqueLleno(int lastRegister, int clave, T &dato);
 
         bool ordenarBloque(int posInit);    // True: Primer registro cambiado
         int crearBloque();
