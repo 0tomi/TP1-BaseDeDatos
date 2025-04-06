@@ -6,7 +6,7 @@
 template<typename T>
 Archivo<T>::Archivo(int n, int PMAX, int OMAX): tablaDatos(n, PMAX, OMAX), tablaIndices(PMAX/n)
 {
-    // stuff to do
+
 }
 
 template<typename T>
@@ -27,7 +27,7 @@ std::string Archivo<T>::insertar(int clave, T dato)
             break;
  
         case AreaDatos<T>::OverflowLleno:
-            this->lastWarning = "Insercion realizada al final del overflow, overflow lleno, por favor reorganizar..";
+            this->lastWarning = "Overflow lleno, por favor reorganizar..";
             break;
 
         case AreaDatos<T>::AreaPrimariaLlena:
