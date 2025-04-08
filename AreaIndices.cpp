@@ -39,7 +39,19 @@ AreaIndices::~AreaIndices(){
 }
 
 int AreaIndices::consultar(int claveBuscar){
-	int primerIndice = 0;
+	int indice = 0;
+	int ultimoIndice = this->cantidad - 1;
+	int bloque_anterior = 0;
+	while(indice <= ultimoIndice){
+		if(this->tablaIndices[indice].clave <= claveBuscar) 
+			bloque_anterior = this->tablaIndices[indice].direccion; 
+		indice++;
+	}
+
+	return bloque_anterior;
+
+
+	/*int primerIndice = 0;
 	int ultimoIndice = this->cantidad - 1;
 	int bloque_cercano = -1; 									//Si no se encuentra
 	while(primerIndice <= ultimoIndice){
@@ -57,6 +69,7 @@ int AreaIndices::consultar(int claveBuscar){
 		}
 	}
 	return bloque_cercano;
+	*/
 }
 
 void AreaIndices::actualizarTabla(vector<Indice> newIndices){
