@@ -41,7 +41,7 @@ AreaIndices::~AreaIndices(){
 int AreaIndices::consultar(int claveBuscar){
 	int indice = 0;
 	int ultimoIndice = this->cantidad - 1;
-	int bloque_anterior = -1;
+	int bloque_anterior = 0;
 	while(indice <= ultimoIndice){
 		if(this->tablaIndices[indice].clave <= claveBuscar) 
 			bloque_anterior = this->tablaIndices[indice].direccion; 

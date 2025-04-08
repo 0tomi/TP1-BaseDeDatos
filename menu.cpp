@@ -84,15 +84,6 @@ int main(int argc, char *argv[]) {
 
 	//Archivo archive = definir_archivo();
 	Archivo<string> arch(4, 16, 24);
-	arch.insertar(2, "test1");
-	arch.insertar(8, "test2");
-	arch.insertar(5, "test3");
-	arch.insertar(10, "test4");
-	arch.insertar(12, "test5");
-	arch.insertar(14, "test6");
-	arch.insertar(6, "test7");
-	arch.insertar(7, "test8");
-	arch.insertar(4, "test9");
 
 
 
