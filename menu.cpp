@@ -80,10 +80,7 @@ void menu_global(Archivo<string>& archive){
 	}while(option != '4');
 }
 
-int main(int argc, char *argv[]) {
-
-	//Archivo archive = definir_archivo();
-	Archivo<string> arch(4, 16, 24);
+void testInserciones(Archivo<string>& arch){
 	arch.insertar(2, "test1");
 	arch.insertar(8, "test2");
 	arch.insertar(5, "test3");
@@ -93,8 +90,12 @@ int main(int argc, char *argv[]) {
 	arch.insertar(6, "test7");
 	arch.insertar(7, "test8");
 	arch.insertar(4, "test9");
+}
 
+int main(int argc, char *argv[]) {
 
+	//Archivo arch = definir_archivo();
+	Archivo<string> arch(4, 16, 24);
 
 	menu_global(arch);
 	
