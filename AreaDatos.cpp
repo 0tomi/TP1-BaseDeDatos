@@ -105,13 +105,18 @@ typename AreaDatos<T>::Estado AreaDatos<T>::insercionComunEnBloque(int block, in
 }
 
 /*
-    Posibles salidas: InsercionIntermedia, OverflowLleno
+    Posibles salidas: InsercionIntermedia, OverflowLleno, NuevoBloqueCreado
     Caso bloque lleno: 
-    A: Hay espacio en el Overflow
-        A.1- Se inserta la clave en el overflow.
-        A.2- Se retorna InsercionIntermedia.
-    B: No hay espacio en el Overflow
-        B.1- Se retorna OverflowLleno.
+    A: La clave a insertar esta entre los valores minimos y maximos del bloque.
+        A.A. Hay espacio en el overflow.
+            A.A.1- Se inserta el registro en el overflow.
+            A.A.2- Se graba la direccion del overflow en el ultimo registro del bloque.
+            A.A.2- Se retorna InsercionIntermedia.
+        A.B. No hay espacio en el overflow.
+            A.B.1- Se retorna OverflowLleno.
+    B: La clave a insertar escapa de los valores minimos y maximos del bloque.
+        B.1- Se crea nuevo bloque y se inserta la clave allí.
+        B.2- Se retorna NuevoBloqueCreado.
 
 */
 template<typename T>

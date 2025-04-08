@@ -8,4 +8,6 @@ Informacion de los archivos que se encuentran en el zip:
 - menu.cpp: Menu para visualizar y manejar el archivo secuencial.
 - Archivo.cpp/.h: Objeto gestor del archivo, comunica el area de indices con el area de datos.
 - AreaIndices.cpp/.h: Objeto que representa y maneja el area de indices.
+- Indice.h: Struct asociado al area de indices.
 - AreaDatos.cpp/.h: Objeto que representa y maneja el area de datos.
+- Registro.h: Struct asociado al area de datos.
